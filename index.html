@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>UYAP UDF Editör</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d1b3e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="UDF Editör">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --navy: #0d1b3e;
+  --navy2: #162447;
+  --gold: #c8a84b;
+  --gold2: #e8c96b;
+  --bg: #f4f1eb;
+  --white: #ffffff;
+  --border: #d4cfc4;
+  --text: #1a1a1a;
+  --muted: #7a7a7a;
+  --red: #c0392b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── TOOLBAR ── */
+.toolbar {
+  background: var(--navy);
+  color: #fff;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 50px;
+  flex-shrink: 0;
+  border-bottom: 2px solid var(--gold);
+  z-index: 200;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.toolbar::-webkit-scrollbar { display: none; }
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-right: 8px;
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  color: var(--gold2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.app-brand .logo { font-size: 22px; }
+
+.tb-sep { width: 1px; height: 26px; background: rgba(255,255,255,0.15); margin: 0 4px; flex-shrink: 0; }
+.tb-spacer { flex: 1; min-width: 8px; }
+
+.tb-btn {
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.tb-btn:hover, .tb-btn:active { background: rgba(255,255,255,0.2); }
+.tb-btn.primary { background: var(--gold); border-color: var(--gold2); color: var(--navy); font-weight: 600; }
+.tb-btn.primary:hover { background: var(--gold2); }
+
+/* ── FORMAT BAR ── */
+.format-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 5px 10px;
+  display: none;
+  align-items: center;
+  gap: 3px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.format-bar::-webkit-scrollbar { display: none; }
+.format-bar.visible { display: flex; }
+
+.fb-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--navy);
+  height: 32px;
+  min-width: 32px;
+  padding: 0 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.fb-btn:hover, .fb-btn:active { background: #f0ede7; }
+.fb-btn.on { background: var(--navy); color: white; }
+.fb-sep { width: 1px; height: 20px; background: var(--border); margin: 0 3px; flex-shrink: 0; }
+
+select.fb-sel {
+  height: 32px; border: 1px solid var(--border); border-radius: 5px;
+  padding: 0 6px; font-size: 12px; font-family: 'DM Sans', sans-serif;
+  background: white; color: var(--navy); cursor: pointer; flex-shrink: 0;
+}
+
+/* ── LANDING ── */
+#landing {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px 48px;
+  gap: 28px;
+}
+
+.hero h1 {
+  font-family: 'EB Garamond', serif;
+  font-size: 38px;
+  color: var(--navy);
+  margin-bottom: 10px;
+  line-height: 1.2;
+  text-align: center;
+}
+.hero p { color: var(--muted); font-size: 14px; text-align: center; max-width: 380px; line-height: 1.6; }
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 460px;
+}
+.card {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.card:hover, .card:active {
+  border-color: var(--gold);
+  box-shadow: 0 4px 20px rgba(200,168,75,0.2);
+  transform: translateY(-2px);
+}
+.card-icon { font-size: 36px; display: block; margin-bottom: 10px; }
+.card h3 { font-size: 14px; color: var(--navy); font-weight: 600; margin-bottom: 4px; }
+.card p { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+
+.card.full-width { grid-column: 1 / -1; }
+
+/* Drop overlay */
+.drop-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(13,27,62,0.85);
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+  color: white;
+}
+.drop-overlay.show { display: flex; }
+.drop-overlay .drop-icon { font-size: 72px; animation: bounce 0.6s infinite alternate; }
+.drop-overlay h2 { font-family: 'EB Garamond', serif; font-size: 28px; }
+@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+
+/* ── EDITOR AREA ── */
+#editorArea {
+  flex: 1;
+  overflow-y: auto;
+  display: none;
+  padding: 24px 16px 60px;
+  -webkit-overflow-scrolling: touch;
+}
+#editorArea.visible { display: block; }
+
+.page-wrap {
+  background: white;
+  width: 210mm;
+  max-width: 100%;
+  min-height: 297mm;
+  margin: 0 auto;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  border-radius: 2px;
+}
+
+#editor {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 13.3px;
+  line-height: 1.65;
+  outline: none;
+  color: var(--text);
+  caret-color: var(--navy);
+  min-height: 200px;
+}
+#editor .para { min-height: 1.65em; }
+
+/* Signature block */
+.sig-block {
+  border: 2px dashed var(--gold);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 12px 0;
+  background: #fdf9f0;
+  text-align: center;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  position: relative;
+  cursor: default;
+  user-select: none;
+}
+.sig-block canvas { display: block; margin: 8px auto 0; cursor: crosshair; touch-action: none; }
+.sig-block .sig-label { font-size: 11px; color: var(--gold); font-weight: 600; margin-bottom: 4px; display: block; }
+.sig-clear {
+  position: absolute; top: 6px; right: 8px;
+  background: none; border: none; cursor: pointer;
+  font-size: 16px; color: var(--muted);
+}
+
+/* ── STATUS BAR ── */
+.statusbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 26px;
+  background: var(--navy);
+  color: rgba(255,255,255,0.65);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  justify-content: space-between;
+  z-index: 200;
+}
+.status-pill {
+  background: rgba(200,168,75,0.2);
+  color: var(--gold2);
+  border-radius: 3px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55); z-index: 500;
+  align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white;
+  border-radius: 16px 16px 0 0;
+  padding: 28px 24px 40px;
+  width: 100%; max-width: 540px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(60px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+.modal-handle {
+  width: 40px; height: 4px; background: var(--border);
+  border-radius: 2px; margin: 0 auto 20px; display: block;
+}
+.modal h3 { font-family: 'EB Garamond', serif; color: var(--navy); font-size: 22px; margin-bottom: 18px; }
+.modal label { font-size: 13px; color: var(--navy); font-weight: 600; display: block; margin-bottom: 6px; }
+.modal input[type=text] {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; font-size: 15px; font-family: 'DM Sans', sans-serif;
+  color: var(--text); margin-bottom: 16px;
+}
+.modal input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,168,75,0.15); }
+.modal-actions { display: flex; gap: 10px; }
+.modal-btn {
+  flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 14px;
+  font-family: 'DM Sans', sans-serif; font-weight: 600; cursor: pointer; transition: 0.15s;
+}
+.modal-btn.primary { background: var(--navy); color: white; }
+.modal-btn.primary:hover { background: var(--navy2); }
+.modal-btn.outline { background: transparent; border: 1.5px solid var(--border); color: var(--navy); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 36px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--navy); color: white;
+  padding: 10px 18px; border-radius: 8px; font-size: 13px;
+  z-index: 600; opacity: 0; transition: all 0.25s;
+  white-space: nowrap; pointer-events: none;
+  border-left: 3px solid var(--gold); max-width: 90vw;
+  text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── LOADER ── */
+.loader-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(13,27,62,0.7); z-index: 700;
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+}
+.loader-overlay.show { display: flex; }
+.spinner {
+  width: 44px; height: 44px;
+  border: 4px solid rgba(200,168,75,0.3);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-overlay p { color: white; font-size: 14px; }
+
+@media (max-width: 600px) {
+  .hero h1 { font-size: 28px; }
+  .cards { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="app-brand"><span class="logo">⚖</span>UDF Editör</div>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" onclick="document.getElementById('fileInput').click()">📂 <span>Aç</span></button>
+  <button class="tb-btn" onclick="newDocument()">📄 <span>Yeni</span></button>
+  <button class="tb-btn" onclick="document.getElementById('pdfInput').click()">🔄 <span>PDF→UDF</span></button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn primary" id="btnSave" style="display:none" onclick="openSaveModal()">💾 Kaydet</button>
+  <div class="tb-spacer"></div>
+  <span id="docNameLabel" style="font-size:11px;color:rgba(255,255,255,0.5);flex-shrink:0;display:none;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+</div>
+
+<!-- FORMAT BAR -->
+<div class="format-bar" id="formatBar">
+  <button class="fb-btn" id="fbB" onmousedown="e=>e.preventDefault()" onclick="fmt('bold')" title="Kalın"><b>K</b></button>
+  <button class="fb-btn" id="fbI" onclick="fmt('italic')" title="İtalik"><i>İ</i></button>
+  <button class="fb-btn" id="fbU" onclick="fmt('underline')" title="Altı çizili"><u>A</u></button>
+  <div class="fb-sep"></div>
+  <button class="fb-btn" onclick="fmtAlign('left')"    title="Sola">⬛◻◻</button>
+  <button class="fb-btn" onclick="fmtAlign('center')"  title="Orta">◻⬛◻</button>
+  <button class="fb-btn" onclick="fmtAlign('right')"   title="Sağa">◻◻⬛</button>
+  <button class="fb-btn" onclick="fmtAlign('justify')" title="Yasla">≡</button>
+  <div class="fb-sep"></div>
+  <select class="fb-sel" id="fbSize" onchange="fmtSize(this.value)">
+    <option value="10">10pt</option>
+    <option value="11">11pt</option>
+    <option value="12" selected>12pt</option>
+    <option value="13">13pt</option>
+    <option value="14">14pt</option>
+    <option value="16">16pt</option>
+    <option value="18">18pt</option>
+  </select>
+  <div class="fb-sep"></div>
+  <button class="fb-btn" onclick="insertSignature()" title="İmza alanı ekle">✍️ İmza</button>
+  <button class="fb-btn" onclick="insertSeal()" title="Mühür alanı ekle">🔴 Mühür</button>
+</div>
+
+<!-- HIDDEN FILE INPUTS -->
+<input type="file" id="fileInput" accept=".udf" style="display:none">
+<input type="file" id="pdfInput" accept=".pdf" style="display:none">
+
+<!-- DROP OVERLAY -->
+<div class="drop-overlay" id="dropOverlay">
+  <div class="drop-icon">📄</div>
+  <h2>Dosyayı bırakın</h2>
+  <p style="color:rgba(255,255,255,0.7)">UDF veya PDF</p>
+</div>
+
+<!-- LANDING -->
+<div id="landing">
+  <div class="hero">
+    <h1>⚖ UYAP UDF Editör</h1>
+    <p>Hukuki belgeleri UDF formatında açın, düzenleyin ve UYAP'a yükleyin.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card" onclick="document.getElementById('fileInput').click()">
+      <span class="card-icon">📂</span>
+      <h3>UDF Aç</h3>
+      <p>Mevcut UDF dosyasını düzenle</p>
+    </div>
+    <div class="card" onclick="newDocument()">
+      <span class="card-icon">📄</span>
+      <h3>Yeni Belge</h3>
+      <p>Sıfırdan dilekçe yaz</p>
+    </div>
+    <div class="card" onclick="document.getElementById('pdfInput').click()">
+      <span class="card-icon">🔄</span>
+      <h3>PDF → UDF</h3>
+      <p>PDF'i UDF'e dönüştür</p>
+    </div>
+    <div class="card" onclick="showDropHint()">
+      <span class="card-icon">👆</span>
+      <h3>Sürükle & Bırak</h3>
+      <p>UDF veya PDF'i doğrudan bırak</p>
+    </div>
+  </div>
+</div>
+
+<!-- EDITOR -->
+<div id="editorArea">
+  <div class="page-wrap" id="pageWrap">
+    <div id="editor" contenteditable="true" spellcheck="false"></div>
+  </div>
+</div>
+
+<!-- SAVE MODAL -->
+<div class="modal-overlay" id="saveModal">
+  <div class="modal">
+    <span class="modal-handle"></span>
+    <h3>💾 UDF Olarak Kaydet</h3>
+    <label>Dosya adı</label>
+    <input type="text" id="saveFilename" placeholder="belge.udf">
+    <div class="modal-actions">
+      <button class="modal-btn outline" onclick="closeModal('saveModal')">İptal</button>
+      <button class="modal-btn primary" onclick="doSave()">İndir</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADER -->
+<div class="loader-overlay" id="loader">
+  <div class="spinner"></div>
+  <p id="loaderMsg">İşleniyor…</p>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <span id="statusMsg">Bir dosya açın veya yeni belge oluşturun</span>
+  <span class="status-pill">UDF v1.8</span>
+</div>
+
+<script>
+'use strict';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ── STATE ──
+let model = null;
+let currentFilename = 'belge.udf';
+let sigCanvases = [];
+let activeSignaturePad = null;
+
+// ── FILE INPUTS ──
+document.getElementById('fileInput').addEventListener('change', e => { if(e.target.files[0]) loadUDF(e.target.files[0]); e.target.value=''; });
+document.getElementById('pdfInput').addEventListener('change', e => { if(e.target.files[0]) loadPDF(e.target.files[0]); e.target.value=''; });
+
+// ── DRAG & DROP (anywhere on page) ──
+document.addEventListener('dragover', e => { e.preventDefault(); document.getElementById('dropOverlay').classList.add('show'); });
+document.addEventListener('dragleave', e => { if(!e.relatedTarget) document.getElementById('dropOverlay').classList.remove('show'); });
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  document.getElementById('dropOverlay').classList.remove('show');
+  const f = e.dataTransfer.files[0];
+  if (!f) return;
+  if (f.name.endsWith('.udf')) loadUDF(f);
+  else if (f.name.endsWith('.pdf')) loadPDF(f);
+  else toast('Desteklenmeyen dosya formatı', true);
+});
+
+function showDropHint() { toast('Dosyayı ekrana sürükleyip bırakın'); }
+
+// ── LOAD UDF ──
+async function loadUDF(file) {
+  showLoader('Yükleniyor…');
+  try {
+    const buf = await file.arrayBuffer();
+    model = await parseUDF(buf);
+    currentFilename = file.name;
+    renderDocument();
+    showEditor();
+    setDoc(file.name);
+    toast('Dosya açıldı ✓');
+    setStatus(`${file.name} — ${model.paragraphs.length} paragraf`);
+  } catch(e) { toast('Hata: ' + e.message, true); console.error(e); }
+  hideLoader();
+}
+
+async function parseUDF(buf) {
+  const zip = await JSZip.loadAsync(buf);
+  const xmlStr = await zip.file('content.xml').async('string');
+  const doc = new DOMParser().parseFromString(xmlStr, 'text/xml');
+
+  const tpl = doc.querySelector('template');
+  const flatText = doc.querySelector('content')?.textContent || '';
+  const pf = doc.querySelector('pageFormat');
+  const elementsEl = doc.querySelector('elements');
+  const stylesEl = doc.querySelector('styles');
+
+  const properties = pf ? {
+    mediaSizeName: pf.getAttribute('mediaSizeName')||'1',
+    leftMargin:    +pf.getAttribute('leftMargin')   ||42.525,
+    rightMargin:   +pf.getAttribute('rightMargin')  ||42.525,
+    topMargin:     +pf.getAttribute('topMargin')    ||42.525,
+    bottomMargin:  +pf.getAttribute('bottomMargin') ||42.525,
+    paperOrientation: pf.getAttribute('paperOrientation')||'1',
+    headerFOffset: +pf.getAttribute('headerFOffset')||20,
+    footerFOffset: +pf.getAttribute('footerFOffset')||20,
+  } : defaultProps();
+
+  const paragraphs = [];
+  if (elementsEl) {
+    for (const p of elementsEl.querySelectorAll(':scope > paragraph')) {
+      const runs = [];
+      for (const r of p.querySelectorAll('content')) {
+        runs.push({
+          startOffset: +r.getAttribute('startOffset')||0,
+          length: +r.getAttribute('length')||0,
+          bold: r.getAttribute('bold')==='true',
+          italic: r.getAttribute('italic')==='true',
+          underline: r.getAttribute('underline')==='true',
+        });
+      }
+      paragraphs.push({
+        alignment: +p.getAttribute('Alignment')||3,
+        firstLineIndent: +p.getAttribute('FirstLineIndent')||0,
+        runs
+      });
+    }
+  }
+
+  return {
+    formatId: tpl?.getAttribute('format_id')||'1.8',
+    flatText, paragraphs, properties,
+    resolver: elementsEl?.getAttribute('resolver')||'hvl-default',
+    stylesXml: stylesEl ? new XMLSerializer().serializeToString(stylesEl) : defaultStylesXml(),
+  };
+}
+
+// ── LOAD PDF ──
+async function loadPDF(file) {
+  showLoader('PDF dönüştürülüyor…');
+  try {
+    const buf = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    let allText = '';
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      setLoaderMsg(`Sayfa ${i}/${pdf.numPages} işleniyor…`);
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+
+      // Reconstruct lines from items
+      const items = content.items;
+      let lines = [];
+      let currentLine = '';
+      let lastY = null;
+
+      for (const item of items) {
+        if ('str' in item) {
+          const y = item.transform[5];
+          if (lastY !== null && Math.abs(y - lastY) > 5) {
+            lines.push(currentLine);
+            currentLine = '';
+          }
+          currentLine += item.str;
+          lastY = y;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      allText += lines.join('\n') + (i < pdf.numPages ? '\n\n' : '');
+    }
+
+    // Build model from extracted text
+    const lines = allText.split('\n');
+    const paragraphs = [];
+    let flatText = '';
+
+    for (const line of lines) {
+      const startOffset = flatText.length;
+      const content = line + '\n';
+      flatText += content;
+      paragraphs.push({
+        alignment: 3,
+        firstLineIndent: 0,
+        runs: [{ startOffset, length: content.length, bold: false, italic: false, underline: false }]
+      });
+    }
+
+    model = {
+      formatId: '1.8', flatText, paragraphs,
+      properties: defaultProps(),
+      resolver: 'hvl-default',
+      stylesXml: defaultStylesXml(),
+    };
+    currentFilename = file.name.replace('.pdf', '.udf');
+    renderDocument();
+    showEditor();
+    setDoc(currentFilename);
+    toast(`PDF dönüştürüldü — ${pdf.numPages} sayfa ✓`);
+    setStatus(`PDF'den dönüştürüldü: ${pdf.numPages} sayfa`);
+  } catch(e) { toast('PDF hatası: ' + e.message, true); console.error(e); }
+  hideLoader();
+}
+
+// ── NEW DOCUMENT ──
+function newDocument() {
+  model = {
+    formatId: '1.8',
+    flatText: '\n',
+    paragraphs: [{ alignment: 3, firstLineIndent: 0, runs: [{ startOffset:0, length:1, bold:false, italic:false, underline:false }] }],
+    properties: defaultProps(),
+    resolver: 'hvl-default',
+    stylesXml: defaultStylesXml(),
+  };
+  currentFilename = 'yeni_belge.udf';
+  renderDocument();
+  showEditor();
+  setDoc(currentFilename);
+  document.getElementById('editor').focus();
+  setStatus('Yeni belge oluşturuldu');
+}
+
+function defaultProps() {
+  return { mediaSizeName:'1', leftMargin:42.525, rightMargin:42.525, topMargin:42.525, bottomMargin:42.525, paperOrientation:'1', headerFOffset:20, footerFOffset:20 };
+}
+function defaultStylesXml() {
+  return `<styles><style name="default" description="Geçerli" family="Dialog" size="12" bold="false" italic="false" foreground="-13421773" FONT_ATTRIBUTE_KEY="javax.swing.plaf.FontUIResource[family=Dialog,name=Dialog,style=plain,size=12]" /><style name="hvl-default" family="Times New Roman" size="12" description="Gövde" /></styles>`;
+}
+
+// ── RENDER ──
+function renderDocument() {
+  const editor = document.getElementById('editor');
+  const page = document.getElementById('pageWrap');
+  const p = model.properties;
+  const pt = 1.333333;
+  page.style.padding = `${p.topMargin*pt}px ${p.rightMargin*pt}px ${p.bottomMargin*pt}px ${p.leftMargin*pt}px`;
+  editor.innerHTML = '';
+  sigCanvases = [];
+
+  for (const para of model.paragraphs) {
+    const div = document.createElement('div');
+    div.className = 'para';
+    div.dataset.align = para.alignment;
+    div.dataset.indent = para.firstLineIndent;
+    applyAlign(div, para.alignment);
+    if (para.firstLineIndent > 0) div.style.textIndent = (para.firstLineIndent * pt) + 'px';
+
+    let hasContent = false;
+    for (const run of para.runs) {
+      const raw = model.flatText.substring(run.startOffset, run.startOffset + run.length);
+      const text = raw.replace(/\n$/, '');
+      if (!text) continue;
+      const span = document.createElement('span');
+      span.textContent = text;
+      if (run.bold)      span.style.fontWeight = 'bold';
+      if (run.italic)    span.style.fontStyle  = 'italic';
+      if (run.underline) span.style.textDecoration = 'underline';
+      div.appendChild(span);
+      hasContent = true;
+    }
+    if (!hasContent) div.innerHTML = '<br>';
+    editor.appendChild(div);
+  }
+}
+
+function applyAlign(el, a) {
+  el.style.textAlign = ['left','center','right','justify'][a] || 'left';
+}
+
+// ── SHOW EDITOR ──
+function showEditor() {
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('editorArea').classList.add('visible');
+  document.getElementById('formatBar').classList.add('visible');
+  document.getElementById('btnSave').style.display = '';
+}
+
+// ── FORMATTING ──
+function fmt(cmd) {
+  document.execCommand(cmd, false, null);
+  updateFmtBtns();
+  document.getElementById('editor').focus();
+}
+
+function fmtAlign(a) {
+  const sel = window.getSelection();
+  if (!sel?.rangeCount) return;
+  let node = sel.getRangeAt(0).commonAncestorContainer;
+  const editor = document.getElementById('editor');
+  while (node && node !== editor) {
+    if (node.classList?.contains('para')) break;
+    node = node.parentNode;
+  }
+  if (node?.classList?.contains('para')) {
+    const map = { left:0, center:1, right:2, justify:3 };
+    node.dataset.align = map[a]??3;
+    applyAlign(node, map[a]??3);
+  }
+  editor.focus();
+}
+
+function fmtSize(size) {
+  document.execCommand('fontSize', false, '7');
+  document.querySelectorAll('#editor font[size="7"]').forEach(s => {
+    s.removeAttribute('size');
+    s.style.fontSize = size + 'pt';
+  });
+  document.getElementById('editor').focus();
+}
+
+document.getElementById('editor').addEventListener('keyup', updateFmtBtns);
+document.getElementById('editor').addEventListener('mouseup', updateFmtBtns);
+
+function updateFmtBtns() {
+  document.getElementById('fbB').classList.toggle('on', document.queryCommandState('bold'));
+  document.getElementById('fbI').classList.toggle('on', document.queryCommandState('italic'));
+  document.getElementById('fbU').classList.toggle('on', document.queryCommandState('underline'));
+}
+
+// ── SIGNATURE & SEAL ──
+function insertSignature() { insertSpecialBlock('sig', '✍️ İmza Alanı — Parmak veya kalem ile imzalayın'); }
+function insertSeal()      { insertSpecialBlock('seal', '🔴 Mühür / Kaşe Alanı'); }
+
+function insertSpecialBlock(type, label) {
+  const editor = document.getElementById('editor');
+  const id = 'special-' + Date.now();
+  const block = document.createElement('div');
+  block.className = 'sig-block';
+  block.contentEditable = 'false';
+  block.dataset.type = type;
+  block.dataset.id = id;
+
+  block.innerHTML = `
+    <span class="sig-label">${label}</span>
+    <canvas width="360" height="120" id="canvas-${id}"></canvas>
+    <button class="sig-clear" onclick="clearSigCanvas('canvas-${id}')" title="Temizle">✕</button>
+    <div style="margin-top:8px;font-size:11px;color:var(--muted)">İmzaladıktan sonra belgeyi kaydedin</div>
+  `;
+
+  // Insert at cursor or end
+  const sel = window.getSelection();
+  if (sel?.rangeCount) {
+    const range = sel.getRangeAt(0);
+    range.collapse(false);
+    range.insertNode(block);
+    range.setStartAfter(block);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else {
+    editor.appendChild(block);
+  }
+
+  // Init drawing
+  setTimeout(() => initSigCanvas(id), 50);
+  toast('İmza alanı eklendi — imzalamak için tıklayın');
+}
+
+function initSigCanvas(id) {
+  const canvas = document.getElementById('canvas-' + id);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#0d1b3e';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  let drawing = false, lastX = 0, lastY = 0;
+
+  function getPos(e, canvas) {
+    const rect = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return [src.clientX - rect.left, src.clientY - rect.top];
+  }
+
+  function start(e) { e.preventDefault(); drawing = true; [lastX, lastY] = getPos(e, canvas); }
+  function move(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const [x, y] = getPos(e, canvas);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    [lastX, lastY] = [x, y];
+  }
+  function end() { drawing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move, { passive: false });
+  canvas.addEventListener('touchend', end);
+}
+
+function clearSigCanvas(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// ── SAVE ──
+function openSaveModal() {
+  if (!model) return;
+  document.getElementById('saveFilename').value = currentFilename;
+  document.getElementById('saveModal').classList.add('open');
+  setTimeout(() => {
+    const inp = document.getElementById('saveFilename');
+    inp.focus(); inp.select();
+  }, 100);
+}
+
+async function doSave() {
+  closeModal('saveModal');
+  let fn = document.getElementById('saveFilename').value.trim() || 'belge';
+  if (!fn.endsWith('.udf')) fn += '.udf';
+  showLoader('Kaydediliyor…');
+  try {
+    const blob = await serializeToUDF();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fn;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    currentFilename = fn;
+    setDoc(fn);
+    setStatus(`Kaydedildi: ${fn}`);
+    toast('UDF indirildi ✓');
+  } catch(e) { toast('Kayıt hatası: ' + e.message, true); console.error(e); }
+  hideLoader();
+}
+
+async function serializeToUDF() {
+  const editor = document.getElementById('editor');
+  let flatText = '';
+  const paragraphs = [];
+
+  for (const node of editor.childNodes) {
+    if (node.classList?.contains('sig-block')) {
+      // Serialize signature as canvas image data URI comment in flat text
+      const canvas = node.querySelector('canvas');
+      const label = node.querySelector('.sig-label')?.textContent || 'İmza';
+      const imgData = canvas ? canvas.toDataURL() : '';
+      const sigLine = `[${label}]`;
+      const start = flatText.length;
+      flatText += sigLine + '\n';
+      paragraphs.push({
+        alignment: 1, firstLineIndent: 0,
+        runs: [{ startOffset: start, length: sigLine.length + 1, bold: false, italic: false, underline: false }]
+      });
+      continue;
+    }
+
+    if (!node.classList?.contains('para')) continue;
+
+    const segs = [];
+    walkNode(node, { bold:false, italic:false, underline:false }, segs);
+
+    const alignNum = +node.dataset.align ?? 3;
+    const indent = +node.dataset.indent ?? 0;
+    const runs = [];
+    let hasContent = false;
+
+    for (const seg of segs) {
+      if (!seg.text) continue;
+      const start = flatText.length;
+      flatText += seg.text;
+      runs.push({ startOffset: start, length: seg.text.length, bold: seg.bold, italic: seg.italic, underline: seg.underline });
+      hasContent = true;
+    }
+
+    const nlOff = flatText.length;
+    flatText += '\n';
+    if (hasContent) runs[runs.length-1].length += 1;
+    else runs.push({ startOffset: nlOff, length: 1, bold:false, italic:false, underline:false });
+
+    paragraphs.push({ alignment: alignNum, firstLineIndent: indent, runs });
+  }
+
+  if (paragraphs.length === 0) {
+    flatText = '\n';
+    paragraphs.push({ alignment:3, firstLineIndent:0, runs:[{ startOffset:0, length:1, bold:false, italic:false, underline:false }] });
+  }
+
+  const xml = buildXML(flatText, paragraphs);
+  const zip = new JSZip();
+  zip.file('content.xml', xml);
+  return zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
+}
+
+function walkNode(node, style, out) {
+  if (node.nodeType === Node.TEXT_NODE) { if(node.textContent) out.push({ text:node.textContent, ...style }); return; }
+  if (node.nodeType !== Node.ELEMENT_NODE || node.tagName === 'BR') return;
+  const s = { ...style };
+  const tag = node.tagName, cs = node.style||{};
+  if (tag==='B'||tag==='STRONG'||cs.fontWeight==='bold')  s.bold=true;
+  if (tag==='I'||tag==='EM'||cs.fontStyle==='italic')     s.italic=true;
+  if (tag==='U'||(cs.textDecoration||'').includes('underline')) s.underline=true;
+  for (const c of node.childNodes) walkNode(c, s, out);
+}
+
+function buildXML(flatText, paragraphs) {
+  const safe = flatText.replace(/]]>/g, ']]]]><![CDATA[>');
+  const p = model.properties;
+
+  let elems = `<elements resolver="${model.resolver}">\n`;
+  for (const para of paragraphs) {
+    let a = `Alignment="${para.alignment}"`;
+    if (para.firstLineIndent > 0.001) a += ` FirstLineIndent="${para.firstLineIndent}"`;
+    elems += `<paragraph ${a}>`;
+    for (const r of para.runs) {
+      let ra = `startOffset="${r.startOffset}" length="${r.length}"`;
+      if (r.bold)      ra += ` bold="true"`;
+      if (r.italic)    ra += ` italic="true"`;
+      if (r.underline) ra += ` underline="true"`;
+      elems += `<content ${ra} />`;
+    }
+    elems += `</paragraph>\n`;
+  }
+  elems += `</elements>`;
+
+  const props = `<properties><pageFormat mediaSizeName="${p.mediaSizeName}" leftMargin="${p.leftMargin}" rightMargin="${p.rightMargin}" topMargin="${p.topMargin}" bottomMargin="${p.bottomMargin}" paperOrientation="${p.paperOrientation}" headerFOffset="${p.headerFOffset}" footerFOffset="${p.footerFOffset}" /></properties>`;
+
+  return `<?xml version="1.0" encoding="UTF-8" ?>\n\n<template format_id="${model.formatId}" >\n<content><![CDATA[${safe}]]></content>${props}\n${elems}\n${model.stylesXml}\n</template>`;
+}
+
+// ── UTILS ──
+function setDoc(name) {
+  document.getElementById('docNameLabel').textContent = name;
+  document.getElementById('docNameLabel').style.display = '';
+}
+function setStatus(msg) { document.getElementById('statusMsg').textContent = msg; }
+function toast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderLeftColor = err ? '#e74c3c' : 'var(--gold)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showLoader(msg='İşleniyor…') {
+  document.getElementById('loaderMsg').textContent = msg;
+  document.getElementById('loader').classList.add('show');
+}
+function setLoaderMsg(msg) { document.getElementById('loaderMsg').textContent = msg; }
+function hideLoader() { document.getElementById('loader').classList.remove('show'); }
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(el =>
+  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); })
+);
+document.getElementById('saveFilename').addEventListener('keydown', e => { if(e.key==='Enter') doSave(); });
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); if(model) openSaveModal(); }
+});
+
+// ── SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(console.error);
+}
+</script>
+</body>
+</html>
