@@ -239,7 +239,6 @@ select.fb-sel {
 }
 #editor .para {
   min-height: 1.65em;
-  white-space: pre-wrap;
 }
 
 
@@ -351,6 +350,7 @@ select.fb-sel {
   <button class="tb-btn" onclick="document.getElementById('pdfInput').click()">🔄 <span>PDF→UDF</span></button>
   <div class="tb-sep"></div>
   <button class="tb-btn primary" id="btnSave" style="display:none" onclick="openSaveModal()">💾 Kaydet</button>
+  <button class="tb-btn" id="btnShare" style="display:none" onclick="shareDoc()">📤 <span>Paylaş</span></button>
   <div class="tb-spacer"></div>
   <span id="docNameLabel" style="font-size:11px;color:rgba(255,255,255,0.5);flex-shrink:0;display:none;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
 </div>
@@ -366,6 +366,15 @@ select.fb-sel {
   <button class="fb-btn" onclick="fmtAlign('right')"   title="Sağa">◻◻⬛</button>
   <button class="fb-btn" onclick="fmtAlign('justify')" title="Yasla">≡</button>
   <div class="fb-sep"></div>
+  <select class="fb-sel" id="fbFont" onchange="fmtFont(this.value)" title="Yazı tipi">
+    <option value="Times New Roman" selected>Times New Roman</option>
+    <option value="Arial">Arial</option>
+    <option value="Calibri">Calibri</option>
+    <option value="Georgia">Georgia</option>
+    <option value="Verdana">Verdana</option>
+    <option value="Courier New">Courier New</option>
+    <option value="Tahoma">Tahoma</option>
+  </select>
   <select class="fb-sel" id="fbSize" onchange="fmtSize(this.value)">
     <option value="10">10pt</option>
     <option value="11">11pt</option>
@@ -693,6 +702,51 @@ function showEditor() {
   document.getElementById('editorArea').classList.add('visible');
   document.getElementById('formatBar').classList.add('visible');
   document.getElementById('btnSave').style.display = '';
+  document.getElementById('btnShare').style.display = '';
+}
+
+// ── SHARE ──
+async function shareDoc() {
+  if (!model) return;
+  showLoader('Hazırlanıyor…');
+  try {
+    const blob = await serializeToUDF();
+    const file = new File([blob], currentFilename, { type: 'application/octet-stream' });
+
+    // Web Share API Level 2 — dosya paylaşımı (Android Chrome destekler)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      hideLoader();
+      await navigator.share({
+        title: currentFilename,
+        text: 'UYAP UDF Belgesi',
+        files: [file],
+      });
+      toast('Paylaşıldı ✓');
+    } else if (navigator.share) {
+      // Dosya paylaşımı desteklenmiyorsa sadece metin paylaş
+      hideLoader();
+      await navigator.share({
+        title: currentFilename,
+        text: `UYAP UDF Belgesi: ${currentFilename}`,
+      });
+    } else {
+      // Masaüstü — direkt indir
+      hideLoader();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = currentFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      toast('Dosya indirildi (tarayıcınız paylaşımı desteklemiyor)');
+    }
+  } catch(e) {
+    hideLoader();
+    if (e.name !== 'AbortError') {
+      toast('Paylaşım hatası: ' + e.message, true);
+    }
+  }
 }
 
 // ── FORMATTING ──
@@ -725,6 +779,11 @@ function fmtSize(size) {
     s.removeAttribute('size');
     s.style.fontSize = size + 'pt';
   });
+  document.getElementById('editor').focus();
+}
+
+function fmtFont(fontName) {
+  document.execCommand('fontName', false, fontName);
   document.getElementById('editor').focus();
 }
 
@@ -879,38 +938,32 @@ document.querySelectorAll('.modal-overlay').forEach(el =>
 document.getElementById('saveFilename').addEventListener('keydown', e => { if(e.key==='Enter') doSave(); });
 
 // ── TAB ──
-let tabChar = '\t'; // her zaman gerçek sekme karakteri
+// Sekme genişliği: kaç adet non-breaking space kullanılacak
+let tabSpaces = 8; // varsayılan "normal" ~4cm
 
 function insertTab() {
   const editor = document.getElementById('editor');
-  const sel = window.getSelection();
-  if (!sel?.rangeCount) { editor.focus(); return; }
-  const range = sel.getRangeAt(0);
-  range.deleteContents();
-  const tabNode = document.createTextNode(tabChar);
-  range.insertNode(tabNode);
-  range.setStartAfter(tabNode);
-  range.setEndAfter(tabNode);
-  sel.removeAllRanges();
-  sel.addRange(range);
   editor.focus();
+  // execCommand ile karakter ekleme — tüm tarayıcılarda güvenilir çalışır
+  document.execCommand('insertText', false, '\u00A0'.repeat(tabSpaces));
 }
 
-function setTabWidth(cm) {
-  // tab-size CSS birimi olarak "ch" kullanıyoruz: Times New Roman 12pt'de 1ch ≈ 6px
-  // cm değerini yaklaşık karakter sayısına çeviriyoruz (1cm ≈ 3.8 karakter @12pt TNR)
-  const chars = Math.round(cm * 3.8);
-  document.getElementById('editor').style.tabSize = chars;
-  document.getElementById('editor').style.MozTabSize = chars;
+function setTabWidth(val) {
+  // Dar=4, Normal=8, Geniş=12 non-breaking space
+  const map = { '2': 4, '4': 8, '6': 12 };
+  tabSpaces = map[val] || 8;
 }
 
 // Keyboard shortcuts
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); if(model) openSaveModal(); }
-  // Tab tuşunu editörde sekme karakteri olarak işle
-  if (e.key === 'Tab' && document.activeElement?.closest('#editor')) {
-    e.preventDefault();
-    insertTab();
+  // Tab tuşunu editörde sekme olarak işle
+  if (e.key === 'Tab') {
+    const editor = document.getElementById('editor');
+    if (editor.contains(document.activeElement) || document.activeElement === editor) {
+      e.preventDefault();
+      insertTab();
+    }
   }
 });
 
