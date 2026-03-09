@@ -302,6 +302,41 @@ select.fb-sel {
 .modal-btn.primary:hover { background: var(--navy2); }
 .modal-btn.outline { background: transparent; border: 1.5px solid var(--border); color: var(--navy); }
 
+/* ── LIST DROPDOWN PANEL ── */
+.list-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  z-index: 400;
+  width: 300px;
+}
+.list-panel.open { display: block; }
+.list-panel-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.list-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.list-opt {
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  padding: 8px 6px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 10px;
+  color: var(--navy);
+  line-height: 1.6;
+  transition: all 0.15s;
+  background: white;
+  font-family: 'DM Sans', sans-serif;
+}
+.list-opt:hover { border-color: var(--gold); background: #fdf9f0; }
+.list-opt.selected { border-color: var(--gold); background: #fdf9f0; }
+.list-opt .list-preview { font-size: 9px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+.fb-list-wrap { position: relative; }
+
 /* ── TOAST ── */
 .toast {
   position: fixed; bottom: 36px; left: 50%;
@@ -337,6 +372,75 @@ select.fb-sel {
   .hero h1 { font-size: 28px; }
   .cards { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── LIST DROPDOWN ── */
+.list-dropdown {
+  position: relative; flex-shrink: 0;
+}
+.list-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  padding: 12px;
+  z-index: 400;
+  width: 280px;
+}
+.list-panel.open { display: block; }
+.list-panel h4 {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 8px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.list-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  margin-bottom: 12px;
+}
+.list-item {
+  border: 1.5px solid var(--border); border-radius: 7px;
+  padding: 8px 6px; cursor: pointer; text-align: left;
+  font-size: 11px; font-family: 'DM Sans', sans-serif;
+  background: white; transition: all 0.12s;
+  line-height: 1.6; color: var(--text);
+}
+.list-item:hover { border-color: var(--gold); background: #fdf9f0; }
+.list-item .li-label {
+  display: block; font-size: 10px; color: var(--muted);
+  margin-bottom: 4px; font-weight: 600;
+}
+.list-item .li-preview {
+  font-size: 10.5px; color: var(--navy);
+  white-space: pre-line; line-height: 1.5;
+}
+
+/* ── MARGINS MODAL ── */
+.margins-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 20px;
+}
+.margin-field label {
+  font-size: 12px; color: var(--muted); margin-bottom: 4px;
+}
+.margin-field input[type=number] {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 9px 12px; font-size: 15px; font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+}
+.margin-field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,168,75,0.15); }
+.margin-presets {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.preset-btn {
+  background: #f4f1eb; border: 1.5px solid var(--border); border-radius: 6px;
+  padding: 6px 12px; font-size: 12px; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; color: var(--navy); transition: all 0.12s;
+}
+.preset-btn:hover { border-color: var(--gold); background: #fdf9f0; }
 </style>
 </head>
 <body>
@@ -350,6 +454,7 @@ select.fb-sel {
   <button class="tb-btn" onclick="document.getElementById('pdfInput').click()">🔄 <span>PDF→UDF</span></button>
   <div class="tb-sep"></div>
   <button class="tb-btn primary" id="btnSave" style="display:none" onclick="openSaveModal()">💾 Kaydet</button>
+  <button class="tb-btn" id="btnShare" style="display:none" onclick="shareDoc()">📤 <span>Paylaş</span></button>
   <div class="tb-spacer"></div>
   <span id="docNameLabel" style="font-size:11px;color:rgba(255,255,255,0.5);flex-shrink:0;display:none;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
 </div>
@@ -365,6 +470,15 @@ select.fb-sel {
   <button class="fb-btn" onclick="fmtAlign('right')"   title="Sağa">◻◻⬛</button>
   <button class="fb-btn" onclick="fmtAlign('justify')" title="Yasla">≡</button>
   <div class="fb-sep"></div>
+  <select class="fb-sel" id="fbFont" onchange="fmtFont(this.value)" title="Yazı tipi">
+    <option value="Times New Roman" selected>Times New Roman</option>
+    <option value="Arial">Arial</option>
+    <option value="Calibri">Calibri</option>
+    <option value="Georgia">Georgia</option>
+    <option value="Verdana">Verdana</option>
+    <option value="Courier New">Courier New</option>
+    <option value="Tahoma">Tahoma</option>
+  </select>
   <select class="fb-sel" id="fbSize" onchange="fmtSize(this.value)">
     <option value="10">10pt</option>
     <option value="11">11pt</option>
@@ -381,6 +495,75 @@ select.fb-sel {
     <option value="4" selected>Tab: Normal (4cm)</option>
     <option value="6">Tab: Geniş (6cm)</option>
   </select>
+  <div class="fb-sep"></div>
+  <!-- Liste dropdown -->
+  <div class="list-dropdown" id="listDropdown">
+    <button class="fb-btn" onclick="toggleListPanel()" title="Liste ekle">☰ Liste ▾</button>
+    <div class="list-panel" id="listPanel">
+      <h4>Numaralandırma</h4>
+      <div class="list-grid">
+        <button class="list-item" onclick="insertList('decimal')">
+          <span class="li-label">Sayısal</span>
+          <span class="li-preview">1. ——
+2. ——
+3. ——</span>
+        </button>
+        <button class="list-item" onclick="insertList('upper-alpha')">
+          <span class="li-label">A, B, C</span>
+          <span class="li-preview">A. ——
+B. ——
+C. ——</span>
+        </button>
+        <button class="list-item" onclick="insertList('lower-alpha')">
+          <span class="li-label">a, b, c</span>
+          <span class="li-preview">a. ——
+b. ——
+c. ——</span>
+        </button>
+        <button class="list-item" onclick="insertList('upper-roman')">
+          <span class="li-label">Romen</span>
+          <span class="li-preview">I. ——
+II. ——
+III. ——</span>
+        </button>
+        <button class="list-item" onclick="insertList('lower-roman')">
+          <span class="li-label">romen</span>
+          <span class="li-preview">i. ——
+ii. ——
+iii. ——</span>
+        </button>
+        <button class="list-item" onclick="insertList('paren-decimal')">
+          <span class="li-label">1), 2)</span>
+          <span class="li-preview">1) ——
+2) ——
+3) ——</span>
+        </button>
+      </div>
+      <h4>Madde İşareti</h4>
+      <div class="list-grid">
+        <button class="list-item" onclick="insertList('bullet')">
+          <span class="li-label">Nokta</span>
+          <span class="li-preview">• ——
+• ——
+• ——</span>
+        </button>
+        <button class="list-item" onclick="insertList('dash')">
+          <span class="li-label">Tire</span>
+          <span class="li-preview">– ——
+– ——
+– ——</span>
+        </button>
+        <button class="list-item" onclick="insertList('arrow')">
+          <span class="li-label">Ok</span>
+          <span class="li-preview">► ——
+► ——
+► ——</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="fb-sep"></div>
+  <button class="fb-btn" onclick="openMarginsModal()" title="Kenar boşlukları">📐 Kenarlar</button>
 </div>
 
 <!-- HIDDEN FILE INPUTS -->
@@ -442,6 +625,41 @@ select.fb-sel {
     <div class="modal-actions">
       <button class="modal-btn outline" onclick="closeModal('saveModal')">İptal</button>
       <button class="modal-btn primary" onclick="doSave()">İndir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MARGINS MODAL -->
+<div class="modal-overlay" id="marginsModal">
+  <div class="modal">
+    <span class="modal-handle"></span>
+    <h3>📐 Kenar Boşlukları</h3>
+    <div class="margin-presets">
+      <button class="preset-btn" onclick="applyPreset(2,2,2,2)">Normal (2cm)</button>
+      <button class="preset-btn" onclick="applyPreset(2.5,2.5,3.5,2.5)">UYAP Standart</button>
+      <button class="preset-btn" onclick="applyPreset(3,3,3,3)">Geniş (3cm)</button>
+    </div>
+    <div class="margins-grid">
+      <div class="margin-field">
+        <label>Sol (cm)</label>
+        <input type="number" id="mLeft" value="2" min="0.5" max="8" step="0.5">
+      </div>
+      <div class="margin-field">
+        <label>Sağ (cm)</label>
+        <input type="number" id="mRight" value="2" min="0.5" max="8" step="0.5">
+      </div>
+      <div class="margin-field">
+        <label>Üst (cm)</label>
+        <input type="number" id="mTop" value="3.5" min="0.5" max="8" step="0.5">
+      </div>
+      <div class="margin-field">
+        <label>Alt (cm)</label>
+        <input type="number" id="mBottom" value="2" min="0.5" max="8" step="0.5">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn outline" onclick="closeModal('marginsModal')">İptal</button>
+      <button class="modal-btn primary" onclick="applyMargins()">Uygula</button>
     </div>
   </div>
 </div>
@@ -692,6 +910,51 @@ function showEditor() {
   document.getElementById('editorArea').classList.add('visible');
   document.getElementById('formatBar').classList.add('visible');
   document.getElementById('btnSave').style.display = '';
+  document.getElementById('btnShare').style.display = '';
+}
+
+// ── SHARE ──
+async function shareDoc() {
+  if (!model) return;
+  showLoader('Hazırlanıyor…');
+  try {
+    const blob = await serializeToUDF();
+    const file = new File([blob], currentFilename, { type: 'application/octet-stream' });
+
+    // Web Share API Level 2 — dosya paylaşımı (Android Chrome destekler)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      hideLoader();
+      await navigator.share({
+        title: currentFilename,
+        text: 'UYAP UDF Belgesi',
+        files: [file],
+      });
+      toast('Paylaşıldı ✓');
+    } else if (navigator.share) {
+      // Dosya paylaşımı desteklenmiyorsa sadece metin paylaş
+      hideLoader();
+      await navigator.share({
+        title: currentFilename,
+        text: `UYAP UDF Belgesi: ${currentFilename}`,
+      });
+    } else {
+      // Masaüstü — direkt indir
+      hideLoader();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = currentFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      toast('Dosya indirildi (tarayıcınız paylaşımı desteklemiyor)');
+    }
+  } catch(e) {
+    hideLoader();
+    if (e.name !== 'AbortError') {
+      toast('Paylaşım hatası: ' + e.message, true);
+    }
+  }
 }
 
 // ── FORMATTING ──
@@ -727,16 +990,10 @@ function fmtSize(size) {
   document.getElementById('editor').focus();
 }
 
-document.getElementById('editor').addEventListener('keyup', updateFmtBtns);
-document.getElementById('editor').addEventListener('mouseup', updateFmtBtns);
-
-function updateFmtBtns() {
-  document.getElementById('fbB').classList.toggle('on', document.queryCommandState('bold'));
-  document.getElementById('fbI').classList.toggle('on', document.queryCommandState('italic'));
-  document.getElementById('fbU').classList.toggle('on', document.queryCommandState('underline'));
+function fmtFont(fontName) {
+  document.execCommand('fontName', false, fontName);
+  document.getElementById('editor').focus();
 }
-
-
 
 // ── SAVE ──
 function openSaveModal() {
@@ -906,6 +1163,132 @@ document.addEventListener('keydown', e => {
     }
   }
 });
+
+// ── LİSTE ──
+const listCounters = {}; // her liste tipi için sayaç
+
+function toggleListPanel() {
+  const panel = document.getElementById('listPanel');
+  panel.classList.toggle('open');
+  // Dışarı tıklanınca kapat
+  if (panel.classList.contains('open')) {
+    setTimeout(() => {
+      document.addEventListener('click', closeListPanel, { once: true });
+    }, 10);
+  }
+}
+
+function closeListPanel() {
+  document.getElementById('listPanel')?.classList.remove('open');
+}
+
+function insertList(type) {
+  closeListPanel();
+  const editor = document.getElementById('editor');
+  editor.focus();
+
+  // Sayaç sıfırla ve 3 örnek madde ekle
+  const items = ['Birinci madde', 'İkinci madde', 'Üçüncü madde'];
+  let html = '';
+
+  items.forEach((text, i) => {
+    const prefix = getListPrefix(type, i + 1);
+    html += `<div class="para" data-align="3" data-indent="0" style="text-align:justify">${prefix}${text}</div>`;
+  });
+
+  // Seçili paragrafın sonuna ekle, yoksa editör sonuna
+  const sel = window.getSelection();
+  let insertAfter = null;
+  if (sel?.rangeCount) {
+    let node = sel.getRangeAt(0).commonAncestorContainer;
+    while (node && node !== editor) {
+      if (node.classList?.contains('para')) { insertAfter = node; break; }
+      node = node.parentNode;
+    }
+  }
+
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  const frags = [...tmp.children];
+
+  if (insertAfter && insertAfter.parentNode === editor) {
+    frags.reverse().forEach(el => insertAfter.after(el));
+  } else {
+    frags.forEach(el => editor.appendChild(el));
+  }
+
+  toast(`Liste eklendi (${getListLabel(type)})`);
+}
+
+function getListPrefix(type, n) {
+  switch(type) {
+    case 'decimal':      return `${n}.\u00A0\u00A0`;
+    case 'upper-alpha':  return `${String.fromCharCode(64+n)}.\u00A0\u00A0`;
+    case 'lower-alpha':  return `${String.fromCharCode(96+n)})\u00A0\u00A0`;
+    case 'upper-roman':  return `${toRoman(n)}.\u00A0\u00A0`;
+    case 'lower-roman':  return `${toRoman(n).toLowerCase()}.\u00A0\u00A0`;
+    case 'paren-decimal':return `${n})\u00A0\u00A0`;
+    case 'bullet':       return `•\u00A0\u00A0`;
+    case 'dash':         return `–\u00A0\u00A0`;
+    case 'arrow':        return `►\u00A0\u00A0`;
+    default:             return `${n}.\u00A0\u00A0`;
+  }
+}
+
+function getListLabel(type) {
+  const map = {
+    decimal:'1. 2. 3.', 'upper-alpha':'A. B. C.', 'lower-alpha':'a) b) c)',
+    'upper-roman':'I. II. III.', 'lower-roman':'i. ii. iii.', 'paren-decimal':'1) 2) 3)',
+    bullet:'• Madde', dash:'– Madde', arrow:'► Madde'
+  };
+  return map[type] || type;
+}
+
+function toRoman(n) {
+  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
+  const syms = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+  let result = '';
+  for (let i = 0; i < vals.length; i++) {
+    while (n >= vals[i]) { result += syms[i]; n -= vals[i]; }
+  }
+  return result;
+}
+
+// ── KENAR BOŞLUKLARI ──
+function openMarginsModal() {
+  if (!model) return;
+  const p = model.properties;
+  const ptToCm = v => (v / 28.3465).toFixed(1);
+  document.getElementById('mLeft').value   = ptToCm(p.leftMargin);
+  document.getElementById('mRight').value  = ptToCm(p.rightMargin);
+  document.getElementById('mTop').value    = ptToCm(p.topMargin);
+  document.getElementById('mBottom').value = ptToCm(p.bottomMargin);
+  document.getElementById('marginsModal').classList.add('open');
+}
+
+function applyPreset(left, right, top, bottom) {
+  document.getElementById('mLeft').value   = left;
+  document.getElementById('mRight').value  = right;
+  document.getElementById('mTop').value    = top;
+  document.getElementById('mBottom').value = bottom;
+}
+
+function applyMargins() {
+  const cmToPt = v => parseFloat(v) * 28.3465;
+  model.properties.leftMargin   = cmToPt(document.getElementById('mLeft').value);
+  model.properties.rightMargin  = cmToPt(document.getElementById('mRight').value);
+  model.properties.topMargin    = cmToPt(document.getElementById('mTop').value);
+  model.properties.bottomMargin = cmToPt(document.getElementById('mBottom').value);
+
+  // Sayfayı yeniden render et (sadece padding güncelle, içeriğe dokunma)
+  const page = document.getElementById('pageWrap');
+  const p = model.properties;
+  const pt = 1.333333;
+  page.style.padding = `${p.topMargin*pt}px ${p.rightMargin*pt}px ${p.bottomMargin*pt}px ${p.leftMargin*pt}px`;
+
+  closeModal('marginsModal');
+  toast('Kenar boşlukları güncellendi ✓');
+}
 
 // ── SERVICE WORKER ──
 if ('serviceWorker' in navigator) {
