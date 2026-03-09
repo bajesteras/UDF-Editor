@@ -498,41 +498,41 @@ select.fb-sel {
   <div class="fb-sep"></div>
   <!-- Liste dropdown -->
   <div class="list-dropdown" id="listDropdown">
-    <button class="fb-btn" onclick="toggleListPanel()" title="Liste ekle">☰ Liste ▾</button>
+    <button class="fb-btn" onclick="toggleListPanel(event)" title="Liste ekle">☰ Liste ▾</button>
     <div class="list-panel" id="listPanel">
       <h4>Numaralandırma</h4>
       <div class="list-grid">
-        <button class="list-item" onclick="insertList('decimal')">
+        <button class="list-item" onclick="insertList('decimal', event)">
           <span class="li-label">Sayısal</span>
           <span class="li-preview">1. ——
 2. ——
 3. ——</span>
         </button>
-        <button class="list-item" onclick="insertList('upper-alpha')">
+        <button class="list-item" onclick="insertList('upper-alpha', event)">
           <span class="li-label">A, B, C</span>
           <span class="li-preview">A. ——
 B. ——
 C. ——</span>
         </button>
-        <button class="list-item" onclick="insertList('lower-alpha')">
+        <button class="list-item" onclick="insertList('lower-alpha', event)">
           <span class="li-label">a, b, c</span>
           <span class="li-preview">a. ——
 b. ——
 c. ——</span>
         </button>
-        <button class="list-item" onclick="insertList('upper-roman')">
+        <button class="list-item" onclick="insertList('upper-roman', event)">
           <span class="li-label">Romen</span>
           <span class="li-preview">I. ——
 II. ——
 III. ——</span>
         </button>
-        <button class="list-item" onclick="insertList('lower-roman')">
+        <button class="list-item" onclick="insertList('lower-roman', event)">
           <span class="li-label">romen</span>
           <span class="li-preview">i. ——
 ii. ——
 iii. ——</span>
         </button>
-        <button class="list-item" onclick="insertList('paren-decimal')">
+        <button class="list-item" onclick="insertList('paren-decimal', event)">
           <span class="li-label">1), 2)</span>
           <span class="li-preview">1) ——
 2) ——
@@ -541,19 +541,19 @@ iii. ——</span>
       </div>
       <h4>Madde İşareti</h4>
       <div class="list-grid">
-        <button class="list-item" onclick="insertList('bullet')">
+        <button class="list-item" onclick="insertList('bullet', event)">
           <span class="li-label">Nokta</span>
           <span class="li-preview">• ——
 • ——
 • ——</span>
         </button>
-        <button class="list-item" onclick="insertList('dash')">
+        <button class="list-item" onclick="insertList('dash', event)">
           <span class="li-label">Tire</span>
           <span class="li-preview">– ——
 – ——
 – ——</span>
         </button>
-        <button class="list-item" onclick="insertList('arrow')">
+        <button class="list-item" onclick="insertList('arrow', event)">
           <span class="li-label">Ok</span>
           <span class="li-preview">► ——
 ► ——
@@ -1165,38 +1165,46 @@ document.addEventListener('keydown', e => {
 });
 
 // ── LİSTE ──
-const listCounters = {}; // her liste tipi için sayaç
+let listPanelOpen = false;
 
-function toggleListPanel() {
-  const panel = document.getElementById('listPanel');
-  panel.classList.toggle('open');
-  // Dışarı tıklanınca kapat
-  if (panel.classList.contains('open')) {
-    setTimeout(() => {
-      document.addEventListener('click', closeListPanel, { once: true });
-    }, 10);
-  }
+function toggleListPanel(e) {
+  if (e) e.stopPropagation();
+  listPanelOpen = !listPanelOpen;
+  document.getElementById('listPanel').classList.toggle('open', listPanelOpen);
 }
 
 function closeListPanel() {
-  document.getElementById('listPanel')?.classList.remove('open');
+  listPanelOpen = false;
+  document.getElementById('listPanel').classList.remove('open');
 }
 
-function insertList(type) {
+// Panelin dışına tıklanınca kapat
+document.addEventListener('click', e => {
+  if (listPanelOpen && !document.getElementById('listDropdown').contains(e.target)) {
+    closeListPanel();
+  }
+});
+
+function insertList(type, e) {
+  if (e) e.stopPropagation();
   closeListPanel();
+
+  if (!model) { toast('Önce bir belge açın veya yeni belge oluşturun', true); return; }
+
   const editor = document.getElementById('editor');
-  editor.focus();
 
-  // Sayaç sıfırla ve 3 örnek madde ekle
   const items = ['Birinci madde', 'İkinci madde', 'Üçüncü madde'];
-  let html = '';
-
-  items.forEach((text, i) => {
-    const prefix = getListPrefix(type, i + 1);
-    html += `<div class="para" data-align="3" data-indent="0" style="text-align:justify">${prefix}${text}</div>`;
+  const frags = items.map((text, i) => {
+    const div = document.createElement('div');
+    div.className = 'para';
+    div.dataset.align = '3';
+    div.dataset.indent = '0';
+    div.style.textAlign = 'justify';
+    div.textContent = getListPrefix(type, i + 1) + text;
+    return div;
   });
 
-  // Seçili paragrafın sonuna ekle, yoksa editör sonuna
+  // İmlecin bulunduğu paragrafın arkasına veya editör sonuna ekle
   const sel = window.getSelection();
   let insertAfter = null;
   if (sel?.rangeCount) {
@@ -1207,15 +1215,20 @@ function insertList(type) {
     }
   }
 
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  const frags = [...tmp.children];
-
   if (insertAfter && insertAfter.parentNode === editor) {
-    frags.reverse().forEach(el => insertAfter.after(el));
+    [...frags].reverse().forEach(el => insertAfter.after(el));
   } else {
     frags.forEach(el => editor.appendChild(el));
   }
+
+  // İmleci ilk maddenin sonuna taşı
+  const firstItem = frags[0];
+  const range = document.createRange();
+  range.selectNodeContents(firstItem);
+  range.collapse(false);
+  sel?.removeAllRanges();
+  sel?.addRange(range);
+  editor.focus();
 
   toast(`Liste eklendi (${getListLabel(type)})`);
 }
