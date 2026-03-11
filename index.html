@@ -17,437 +17,122 @@
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap');
 
 :root {
-  --navy: #0d1b3e;
-  --navy2: #162447;
-  --gold: #c8a84b;
-  --gold2: #e8c96b;
-  --bg: #f4f1eb;
-  --white: #ffffff;
-  --border: #d4cfc4;
-  --text: #1a1a1a;
-  --muted: #7a7a7a;
-  --red: #c0392b;
+  --navy: #0d1b3e; --navy2: #162447;
+  --gold: #c8a84b; --gold2: #e8c96b;
+  --bg: #f4f1eb; --white: #ffffff;
+  --border: #d4cfc4; --text: #1a1a1a; --muted: #7a7a7a;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); display: flex; flex-direction: column; height: 100%; overflow: hidden; }
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-}
-
-/* ── TOOLBAR ── */
-.toolbar {
-  background: var(--navy);
-  color: #fff;
-  padding: 0 12px;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  height: 50px;
-  flex-shrink: 0;
-  border-bottom: 2px solid var(--gold);
-  z-index: 200;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
+/* TOOLBAR */
+.toolbar { background: var(--navy); color: #fff; padding: 0 12px; display: flex; align-items: center; gap: 3px; height: 50px; flex-shrink: 0; border-bottom: 2px solid var(--gold); z-index: 200; overflow-x: auto; scrollbar-width: none; }
 .toolbar::-webkit-scrollbar { display: none; }
-
-.app-brand {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-right: 8px;
-  font-family: 'EB Garamond', serif;
-  font-size: 17px;
-  color: var(--gold2);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.app-brand .logo { font-size: 22px; }
-
+.app-brand { display: flex; align-items: center; gap: 7px; margin-right: 8px; font-family: 'EB Garamond', serif; font-size: 17px; color: var(--gold2); white-space: nowrap; flex-shrink: 0; }
 .tb-sep { width: 1px; height: 26px; background: rgba(255,255,255,0.15); margin: 0 4px; flex-shrink: 0; }
 .tb-spacer { flex: 1; min-width: 8px; }
-
-.tb-btn {
-  background: rgba(255,255,255,0.09);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #fff;
-  height: 34px;
-  padding: 0 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12.5px;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-  transition: background 0.15s;
-  flex-shrink: 0;
-  -webkit-user-select: none;
-  user-select: none;
-}
-.tb-btn:hover, .tb-btn:active { background: rgba(255,255,255,0.2); }
+.tb-btn { background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.15); color: #fff; height: 34px; padding: 0 10px; border-radius: 6px; cursor: pointer; font-size: 12.5px; font-family: 'DM Sans', sans-serif; font-weight: 500; display: flex; align-items: center; gap: 5px; white-space: nowrap; flex-shrink: 0; user-select: none; }
+.tb-btn:hover { background: rgba(255,255,255,0.2); }
 .tb-btn.primary { background: var(--gold); border-color: var(--gold2); color: var(--navy); font-weight: 600; }
-.tb-btn.primary:hover { background: var(--gold2); }
 
-/* ── FORMAT BAR ── */
-.format-bar {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 5px 10px;
-  display: none;
-  align-items: center;
-  gap: 3px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  flex-shrink: 0;
-}
+/* FORMAT BAR */
+.format-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 5px 10px; display: none; align-items: center; gap: 3px; overflow-x: auto; scrollbar-width: none; flex-shrink: 0; }
 .format-bar::-webkit-scrollbar { display: none; }
 .format-bar.visible { display: flex; }
-
-.fb-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  color: var(--navy);
-  height: 32px;
-  min-width: 32px;
-  padding: 0 8px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  transition: all 0.12s;
-  white-space: nowrap;
-  flex-shrink: 0;
-  -webkit-user-select: none;
-  user-select: none;
-}
-.fb-btn:hover, .fb-btn:active { background: #f0ede7; }
+.fb-btn { background: transparent; border: 1px solid transparent; color: var(--navy); height: 32px; min-width: 32px; padding: 0 8px; border-radius: 5px; cursor: pointer; font-size: 13px; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap; flex-shrink: 0; user-select: none; }
+.fb-btn:hover { background: #f0ede7; }
 .fb-btn.on { background: var(--navy); color: white; }
 .fb-sep { width: 1px; height: 20px; background: var(--border); margin: 0 3px; flex-shrink: 0; }
+select.fb-sel { height: 32px; border: 1px solid var(--border); border-radius: 5px; padding: 0 6px; font-size: 12px; font-family: 'DM Sans', sans-serif; background: white; color: var(--navy); cursor: pointer; flex-shrink: 0; }
 
-select.fb-sel {
-  height: 32px; border: 1px solid var(--border); border-radius: 5px;
-  padding: 0 6px; font-size: 12px; font-family: 'DM Sans', sans-serif;
-  background: white; color: var(--navy); cursor: pointer; flex-shrink: 0;
+/* LIST DROPDOWN */
+.list-dropdown { position: relative; flex-shrink: 0; }
+.list-panel {
+  display: none; position: absolute; top: calc(100% + 4px); left: 0;
+  background: white; border: 1.5px solid var(--border); border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18); padding: 14px;
+  z-index: 1000; width: 300px; max-height: 70vh; overflow-y: auto;
 }
+.list-panel.open { display: block; }
+.list-panel h4 { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.list-panel h4 + h4, .list-grid + h4 { margin-top: 12px; }
+.list-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.list-item { border: 1.5px solid var(--border); border-radius: 7px; padding: 8px 6px; cursor: pointer; text-align: left; font-size: 11px; font-family: 'DM Sans', sans-serif; background: white; color: var(--text); }
+.list-item:hover { border-color: var(--gold); background: #fdf9f0; }
+.list-item .li-label { display: block; font-size: 10px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+.list-item .li-preview { font-size: 10.5px; color: var(--navy); white-space: pre-line; line-height: 1.5; }
 
-/* ── LANDING ── */
-#landing {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 20px 48px;
-  gap: 28px;
-}
-
-.hero h1 {
-  font-family: 'EB Garamond', serif;
-  font-size: 38px;
-  color: var(--navy);
-  margin-bottom: 10px;
-  line-height: 1.2;
-  text-align: center;
-}
+/* LANDING */
+#landing { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px 48px; gap: 28px; }
+.hero h1 { font-family: 'EB Garamond', serif; font-size: 38px; color: var(--navy); margin-bottom: 10px; line-height: 1.2; text-align: center; }
 .hero p { color: var(--muted); font-size: 14px; text-align: center; max-width: 380px; line-height: 1.6; }
-
-.cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  width: 100%;
-  max-width: 460px;
-}
-.card {
-  background: white;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 20px 16px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.card:hover, .card:active {
-  border-color: var(--gold);
-  box-shadow: 0 4px 20px rgba(200,168,75,0.2);
-  transform: translateY(-2px);
-}
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 460px; }
+.card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 20px 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.card:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(200,168,75,0.2); transform: translateY(-2px); }
 .card-icon { font-size: 36px; display: block; margin-bottom: 10px; }
 .card h3 { font-size: 14px; color: var(--navy); font-weight: 600; margin-bottom: 4px; }
 .card p { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
 
-.card.full-width { grid-column: 1 / -1; }
-
-/* Drop overlay */
-.drop-overlay {
-  display: none;
-  position: fixed; inset: 0; z-index: 400;
-  background: rgba(13,27,62,0.85);
-  align-items: center; justify-content: center;
-  flex-direction: column; gap: 16px;
-  color: white;
-}
+/* DROP OVERLAY */
+.drop-overlay { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(13,27,62,0.85); align-items: center; justify-content: center; flex-direction: column; gap: 16px; color: white; }
 .drop-overlay.show { display: flex; }
-.drop-overlay .drop-icon { font-size: 72px; animation: bounce 0.6s infinite alternate; }
-.drop-overlay h2 { font-family: 'EB Garamond', serif; font-size: 28px; }
+.drop-icon { font-size: 72px; animation: bounce 0.6s infinite alternate; }
 @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }
 
-/* ── EDITOR AREA ── */
-#editorArea {
-  flex: 1;
-  overflow-y: auto;
-  display: none;
-  padding: 24px 16px 60px;
-  -webkit-overflow-scrolling: touch;
-}
+/* EDITOR */
+#editorArea { flex: 1; overflow-y: auto; display: none; padding: 24px 16px 60px; }
 #editorArea.visible { display: block; }
+.page-wrap { background: white; width: 210mm; max-width: 100%; min-height: 297mm; margin: 0 auto; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+#editor { font-family: 'Times New Roman', Times, serif; font-size: 13.3px; line-height: 1.65; outline: none; color: var(--text); caret-color: var(--navy); min-height: 200px; }
+#editor .para { min-height: 1.65em; }
 
-.page-wrap {
-  background: white;
-  width: 210mm;
-  max-width: 100%;
-  min-height: 297mm;
-  margin: 0 auto;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-  border-radius: 2px;
-}
-
-#editor {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 13.3px;
-  line-height: 1.65;
-  outline: none;
-  color: var(--text);
-  caret-color: var(--navy);
-  min-height: 200px;
-}
-#editor .para {
-  min-height: 1.65em;
-}
-
-
-
-/* ── STATUS BAR ── */
-.statusbar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 26px;
-  background: var(--navy);
-  color: rgba(255,255,255,0.65);
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  padding: 0 14px;
-  justify-content: space-between;
-  z-index: 200;
-}
-.status-pill {
-  background: rgba(200,168,75,0.2);
-  color: var(--gold2);
-  border-radius: 3px;
-  padding: 1px 7px;
-  white-space: nowrap;
-}
-
-/* ── MODAL ── */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,0.55); z-index: 500;
-  align-items: flex-end; justify-content: center;
-}
+/* MODALS */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 500; align-items: flex-end; justify-content: center; }
 .modal-overlay.open { display: flex; }
-.modal {
-  background: white;
-  border-radius: 16px 16px 0 0;
-  padding: 28px 24px 40px;
-  width: 100%; max-width: 540px;
-  box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
-  animation: slideUp 0.25s ease;
-}
+.modal { background: white; border-radius: 16px 16px 0 0; padding: 28px 24px 40px; width: 100%; max-width: 540px; box-shadow: 0 -8px 40px rgba(0,0,0,0.2); animation: slideUp 0.25s ease; }
 @keyframes slideUp { from { transform: translateY(60px); opacity:0; } to { transform: translateY(0); opacity:1; } }
-.modal-handle {
-  width: 40px; height: 4px; background: var(--border);
-  border-radius: 2px; margin: 0 auto 20px; display: block;
-}
+.modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; display: block; }
 .modal h3 { font-family: 'EB Garamond', serif; color: var(--navy); font-size: 22px; margin-bottom: 18px; }
 .modal label { font-size: 13px; color: var(--navy); font-weight: 600; display: block; margin-bottom: 6px; }
-.modal input[type=text] {
-  width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
-  padding: 10px 14px; font-size: 15px; font-family: 'DM Sans', sans-serif;
-  color: var(--text); margin-bottom: 16px;
-}
+.modal input[type=text], .modal input[type=number] { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 15px; font-family: 'DM Sans', sans-serif; color: var(--text); margin-bottom: 16px; }
 .modal input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,168,75,0.15); }
 .modal-actions { display: flex; gap: 10px; }
-.modal-btn {
-  flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 14px;
-  font-family: 'DM Sans', sans-serif; font-weight: 600; cursor: pointer; transition: 0.15s;
-}
+.modal-btn { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 600; cursor: pointer; }
 .modal-btn.primary { background: var(--navy); color: white; }
-.modal-btn.primary:hover { background: var(--navy2); }
 .modal-btn.outline { background: transparent; border: 1.5px solid var(--border); color: var(--navy); }
 
-/* ── LIST DROPDOWN PANEL ── */
-.list-panel {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-  z-index: 400;
-  width: 300px;
-}
-.list-panel.open { display: block; }
-.list-panel-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-.list-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.list-opt {
-  border: 1.5px solid var(--border);
-  border-radius: 7px;
-  padding: 8px 6px;
-  cursor: pointer;
-  text-align: center;
-  font-size: 10px;
-  color: var(--navy);
-  line-height: 1.6;
-  transition: all 0.15s;
-  background: white;
-  font-family: 'DM Sans', sans-serif;
-}
-.list-opt:hover { border-color: var(--gold); background: #fdf9f0; }
-.list-opt.selected { border-color: var(--gold); background: #fdf9f0; }
-.list-opt .list-preview { font-size: 9px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
-.fb-list-wrap { position: relative; }
+/* MARGINS MODAL */
+.margins-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.margin-field label { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; }
+.margin-field input { margin-bottom: 0 !important; }
+.margin-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.preset-btn { background: #f4f1eb; border: 1.5px solid var(--border); border-radius: 6px; padding: 6px 12px; font-size: 12px; font-family: 'DM Sans', sans-serif; cursor: pointer; color: var(--navy); }
+.preset-btn:hover { border-color: var(--gold); background: #fdf9f0; }
 
-/* ── TOAST ── */
-.toast {
-  position: fixed; bottom: 36px; left: 50%;
-  transform: translateX(-50%) translateY(16px);
-  background: var(--navy); color: white;
-  padding: 10px 18px; border-radius: 8px; font-size: 13px;
-  z-index: 600; opacity: 0; transition: all 0.25s;
-  white-space: nowrap; pointer-events: none;
-  border-left: 3px solid var(--gold); max-width: 90vw;
-  text-align: center;
-}
+/* TOAST */
+.toast { position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--navy); color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; z-index: 600; opacity: 0; transition: all 0.25s; white-space: nowrap; pointer-events: none; border-left: 3px solid var(--gold); max-width: 90vw; text-align: center; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ── LOADER ── */
-.loader-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(13,27,62,0.7); z-index: 700;
-  align-items: center; justify-content: center;
-  flex-direction: column; gap: 16px;
-}
+/* LOADER */
+.loader-overlay { display: none; position: fixed; inset: 0; background: rgba(13,27,62,0.7); z-index: 700; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
 .loader-overlay.show { display: flex; }
-.spinner {
-  width: 44px; height: 44px;
-  border: 4px solid rgba(200,168,75,0.3);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
+.spinner { width: 44px; height: 44px; border: 4px solid rgba(200,168,75,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loader-overlay p { color: white; font-size: 14px; }
 
-@media (max-width: 600px) {
-  .hero h1 { font-size: 28px; }
-  .cards { grid-template-columns: 1fr 1fr; }
-}
+/* STATUS */
+.statusbar { position: fixed; bottom: 0; left: 0; right: 0; height: 26px; background: var(--navy); color: rgba(255,255,255,0.65); font-size: 11px; display: flex; align-items: center; padding: 0 14px; justify-content: space-between; z-index: 200; }
+.status-pill { background: rgba(200,168,75,0.2); color: var(--gold2); border-radius: 3px; padding: 1px 7px; }
 
-/* ── LIST DROPDOWN ── */
-.list-dropdown {
-  position: relative; flex-shrink: 0;
-}
-.list-panel {
-  display: none;
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-  padding: 12px;
-  z-index: 400;
-  width: 280px;
-}
-.list-panel.open { display: block; }
-.list-panel h4 {
-  font-size: 11px; font-weight: 600; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 0.05em;
-  margin-bottom: 8px; padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-.list-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
-  margin-bottom: 12px;
-}
-.list-item {
-  border: 1.5px solid var(--border); border-radius: 7px;
-  padding: 8px 6px; cursor: pointer; text-align: left;
-  font-size: 11px; font-family: 'DM Sans', sans-serif;
-  background: white; transition: all 0.12s;
-  line-height: 1.6; color: var(--text);
-}
-.list-item:hover { border-color: var(--gold); background: #fdf9f0; }
-.list-item .li-label {
-  display: block; font-size: 10px; color: var(--muted);
-  margin-bottom: 4px; font-weight: 600;
-}
-.list-item .li-preview {
-  font-size: 10.5px; color: var(--navy);
-  white-space: pre-line; line-height: 1.5;
-}
-
-/* ── MARGINS MODAL ── */
-.margins-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 12px; margin-bottom: 20px;
-}
-.margin-field label {
-  font-size: 12px; color: var(--muted); margin-bottom: 4px;
-}
-.margin-field input[type=number] {
-  width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
-  padding: 9px 12px; font-size: 15px; font-family: 'DM Sans', sans-serif;
-  color: var(--text);
-}
-.margin-field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,168,75,0.15); }
-.margin-presets {
-  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
-}
-.preset-btn {
-  background: #f4f1eb; border: 1.5px solid var(--border); border-radius: 6px;
-  padding: 6px 12px; font-size: 12px; font-family: 'DM Sans', sans-serif;
-  cursor: pointer; color: var(--navy); transition: all 0.12s;
-}
-.preset-btn:hover { border-color: var(--gold); background: #fdf9f0; }
+@media (max-width:600px) { .hero h1 { font-size: 28px; } }
 </style>
 </head>
 <body>
 
 <!-- TOOLBAR -->
 <div class="toolbar">
-  <div class="app-brand"><span class="logo">⚖</span>UDF Editör</div>
+  <div class="app-brand"><span>⚖</span>UDF Editör</div>
   <div class="tb-sep"></div>
   <button class="tb-btn" onclick="document.getElementById('fileInput').click()">📂 <span>Aç</span></button>
   <button class="tb-btn" onclick="newDocument()">📄 <span>Yeni</span></button>
@@ -461,16 +146,16 @@ select.fb-sel {
 
 <!-- FORMAT BAR -->
 <div class="format-bar" id="formatBar">
-  <button class="fb-btn" id="fbB" onmousedown="e=>e.preventDefault()" onclick="fmt('bold')" title="Kalın"><b>K</b></button>
-  <button class="fb-btn" id="fbI" onclick="fmt('italic')" title="İtalik"><i>İ</i></button>
-  <button class="fb-btn" id="fbU" onclick="fmt('underline')" title="Altı çizili"><u>A</u></button>
+  <button class="fb-btn" id="fbB" onclick="fmt('bold')"><b>K</b></button>
+  <button class="fb-btn" id="fbI" onclick="fmt('italic')"><i>İ</i></button>
+  <button class="fb-btn" id="fbU" onclick="fmt('underline')"><u>A</u></button>
   <div class="fb-sep"></div>
-  <button class="fb-btn" onclick="fmtAlign('left')"    title="Sola">⬛◻◻</button>
-  <button class="fb-btn" onclick="fmtAlign('center')"  title="Orta">◻⬛◻</button>
-  <button class="fb-btn" onclick="fmtAlign('right')"   title="Sağa">◻◻⬛</button>
-  <button class="fb-btn" onclick="fmtAlign('justify')" title="Yasla">≡</button>
+  <button class="fb-btn" onclick="fmtAlign('left')">⬛◻◻</button>
+  <button class="fb-btn" onclick="fmtAlign('center')">◻⬛◻</button>
+  <button class="fb-btn" onclick="fmtAlign('right')">◻◻⬛</button>
+  <button class="fb-btn" onclick="fmtAlign('justify')">≡</button>
   <div class="fb-sep"></div>
-  <select class="fb-sel" id="fbFont" onchange="fmtFont(this.value)" title="Yazı tipi">
+  <select class="fb-sel" id="fbFont" onchange="fmtFont(this.value)">
     <option value="Times New Roman" selected>Times New Roman</option>
     <option value="Arial">Arial</option>
     <option value="Calibri">Calibri</option>
@@ -489,133 +174,82 @@ select.fb-sel {
     <option value="18">18pt</option>
   </select>
   <div class="fb-sep"></div>
-  <button class="fb-btn" onclick="insertTab()" title="Sekme ekle (Tab)">⇥ Tab</button>
-  <select class="fb-sel" id="fbTabWidth" onchange="setTabWidth(this.value)" title="Tab genişliği">
-    <option value="2">Tab: Dar (2cm)</option>
-    <option value="4" selected>Tab: Normal (4cm)</option>
-    <option value="6">Tab: Geniş (6cm)</option>
+  <button class="fb-btn" onclick="insertTab()">⇥ Tab</button>
+  <select class="fb-sel" onchange="setTabWidth(this.value)">
+    <option value="2">Tab: Dar</option>
+    <option value="4" selected>Tab: Normal</option>
+    <option value="6">Tab: Geniş</option>
   </select>
   <div class="fb-sep"></div>
-  <!-- Liste dropdown -->
   <div class="list-dropdown" id="listDropdown">
-    <button class="fb-btn" onclick="toggleListPanel(event)" title="Liste ekle">☰ Liste ▾</button>
+    <button class="fb-btn" id="listToggleBtn">☰ Liste ▾</button>
     <div class="list-panel" id="listPanel">
       <h4>Numaralandırma</h4>
       <div class="list-grid">
-        <button class="list-item" onclick="insertList('decimal', event)">
-          <span class="li-label">Sayısal</span>
-          <span class="li-preview">1. ——
+        <button class="list-item" data-list="decimal"><span class="li-label">1. 2. 3.</span><span class="li-preview">1. ——
 2. ——
-3. ——</span>
-        </button>
-        <button class="list-item" onclick="insertList('upper-alpha', event)">
-          <span class="li-label">A, B, C</span>
-          <span class="li-preview">A. ——
+3. ——</span></button>
+        <button class="list-item" data-list="upper-alpha"><span class="li-label">A. B. C.</span><span class="li-preview">A. ——
 B. ——
-C. ——</span>
-        </button>
-        <button class="list-item" onclick="insertList('lower-alpha', event)">
-          <span class="li-label">a, b, c</span>
-          <span class="li-preview">a. ——
-b. ——
-c. ——</span>
-        </button>
-        <button class="list-item" onclick="insertList('upper-roman', event)">
-          <span class="li-label">Romen</span>
-          <span class="li-preview">I. ——
+C. ——</span></button>
+        <button class="list-item" data-list="lower-alpha"><span class="li-label">a) b) c)</span><span class="li-preview">a) ——
+b) ——
+c) ——</span></button>
+        <button class="list-item" data-list="upper-roman"><span class="li-label">I. II. III.</span><span class="li-preview">I. ——
 II. ——
-III. ——</span>
-        </button>
-        <button class="list-item" onclick="insertList('lower-roman', event)">
-          <span class="li-label">romen</span>
-          <span class="li-preview">i. ——
+III. ——</span></button>
+        <button class="list-item" data-list="lower-roman"><span class="li-label">i. ii. iii.</span><span class="li-preview">i. ——
 ii. ——
-iii. ——</span>
-        </button>
-        <button class="list-item" onclick="insertList('paren-decimal', event)">
-          <span class="li-label">1), 2)</span>
-          <span class="li-preview">1) ——
+iii. ——</span></button>
+        <button class="list-item" data-list="paren-decimal"><span class="li-label">1) 2) 3)</span><span class="li-preview">1) ——
 2) ——
-3) ——</span>
-        </button>
+3) ——</span></button>
       </div>
       <h4>Madde İşareti</h4>
       <div class="list-grid">
-        <button class="list-item" onclick="insertList('bullet', event)">
-          <span class="li-label">Nokta</span>
-          <span class="li-preview">• ——
+        <button class="list-item" data-list="bullet"><span class="li-label">Nokta</span><span class="li-preview">• ——
 • ——
-• ——</span>
-        </button>
-        <button class="list-item" onclick="insertList('dash', event)">
-          <span class="li-label">Tire</span>
-          <span class="li-preview">– ——
+• ——</span></button>
+        <button class="list-item" data-list="dash"><span class="li-label">Tire</span><span class="li-preview">– ——
 – ——
-– ——</span>
-        </button>
-        <button class="list-item" onclick="insertList('arrow', event)">
-          <span class="li-label">Ok</span>
-          <span class="li-preview">► ——
+– ——</span></button>
+        <button class="list-item" data-list="arrow"><span class="li-label">Ok</span><span class="li-preview">► ——
 ► ——
-► ——</span>
-        </button>
+► ——</span></button>
       </div>
     </div>
   </div>
   <div class="fb-sep"></div>
-  <button class="fb-btn" onclick="openMarginsModal()" title="Kenar boşlukları">📐 Kenarlar</button>
+  <button class="fb-btn" onclick="openMarginsModal()">📐 Kenarlar</button>
 </div>
 
-<!-- HIDDEN FILE INPUTS -->
 <input type="file" id="fileInput" accept=".udf" style="display:none">
 <input type="file" id="pdfInput" accept=".pdf" style="display:none">
 
-<!-- DROP OVERLAY -->
 <div class="drop-overlay" id="dropOverlay">
   <div class="drop-icon">📄</div>
   <h2>Dosyayı bırakın</h2>
-  <p style="color:rgba(255,255,255,0.7)">UDF veya PDF</p>
 </div>
 
-<!-- LANDING -->
 <div id="landing">
   <div class="hero">
     <h1>⚖ UYAP UDF Editör</h1>
     <p>Hukuki belgeleri UDF formatında açın, düzenleyin ve UYAP'a yükleyin.</p>
   </div>
-
   <div class="cards">
-    <div class="card" onclick="document.getElementById('fileInput').click()">
-      <span class="card-icon">📂</span>
-      <h3>UDF Aç</h3>
-      <p>Mevcut UDF dosyasını düzenle</p>
-    </div>
-    <div class="card" onclick="newDocument()">
-      <span class="card-icon">📄</span>
-      <h3>Yeni Belge</h3>
-      <p>Sıfırdan dilekçe yaz</p>
-    </div>
-    <div class="card" onclick="document.getElementById('pdfInput').click()">
-      <span class="card-icon">🔄</span>
-      <h3>PDF → UDF</h3>
-      <p>PDF'i UDF'e dönüştür</p>
-    </div>
-    <div class="card" onclick="showDropHint()">
-      <span class="card-icon">👆</span>
-      <h3>Sürükle & Bırak</h3>
-      <p>UDF veya PDF'i doğrudan bırak</p>
-    </div>
+    <div class="card" onclick="document.getElementById('fileInput').click()"><span class="card-icon">📂</span><h3>UDF Aç</h3><p>Mevcut UDF dosyasını düzenle</p></div>
+    <div class="card" onclick="newDocument()"><span class="card-icon">📄</span><h3>Yeni Belge</h3><p>Sıfırdan dilekçe yaz</p></div>
+    <div class="card" onclick="document.getElementById('pdfInput').click()"><span class="card-icon">🔄</span><h3>PDF → UDF</h3><p>PDF'i UDF'e dönüştür</p></div>
+    <div class="card" onclick="toast('Dosyayı ekrana sürükleyip bırakın')"><span class="card-icon">👆</span><h3>Sürükle & Bırak</h3><p>UDF veya PDF'i doğrudan bırak</p></div>
   </div>
 </div>
 
-<!-- EDITOR -->
 <div id="editorArea">
   <div class="page-wrap" id="pageWrap">
     <div id="editor" contenteditable="true" spellcheck="false"></div>
   </div>
 </div>
 
-<!-- SAVE MODAL -->
 <div class="modal-overlay" id="saveModal">
   <div class="modal">
     <span class="modal-handle"></span>
@@ -629,33 +263,20 @@ iii. ——</span>
   </div>
 </div>
 
-<!-- MARGINS MODAL -->
 <div class="modal-overlay" id="marginsModal">
   <div class="modal">
     <span class="modal-handle"></span>
     <h3>📐 Kenar Boşlukları</h3>
     <div class="margin-presets">
-      <button class="preset-btn" onclick="applyPreset(2,2,2,2)">Normal (2cm)</button>
-      <button class="preset-btn" onclick="applyPreset(2.5,2.5,3.5,2.5)">UYAP Standart</button>
-      <button class="preset-btn" onclick="applyPreset(3,3,3,3)">Geniş (3cm)</button>
+      <button class="preset-btn" onclick="applyPreset(2,2,2,2)">Normal</button>
+      <button class="preset-btn" onclick="applyPreset(2,2,3.5,2)">UYAP Standart</button>
+      <button class="preset-btn" onclick="applyPreset(3,3,3,3)">Geniş</button>
     </div>
     <div class="margins-grid">
-      <div class="margin-field">
-        <label>Sol (cm)</label>
-        <input type="number" id="mLeft" value="2" min="0.5" max="8" step="0.5">
-      </div>
-      <div class="margin-field">
-        <label>Sağ (cm)</label>
-        <input type="number" id="mRight" value="2" min="0.5" max="8" step="0.5">
-      </div>
-      <div class="margin-field">
-        <label>Üst (cm)</label>
-        <input type="number" id="mTop" value="3.5" min="0.5" max="8" step="0.5">
-      </div>
-      <div class="margin-field">
-        <label>Alt (cm)</label>
-        <input type="number" id="mBottom" value="2" min="0.5" max="8" step="0.5">
-      </div>
+      <div class="margin-field"><label>Sol (cm)</label><input type="number" id="mLeft" value="2" min="0.5" max="8" step="0.5"></div>
+      <div class="margin-field"><label>Sağ (cm)</label><input type="number" id="mRight" value="2" min="0.5" max="8" step="0.5"></div>
+      <div class="margin-field"><label>Üst (cm)</label><input type="number" id="mTop" value="3.5" min="0.5" max="8" step="0.5"></div>
+      <div class="margin-field"><label>Alt (cm)</label><input type="number" id="mBottom" value="2" min="0.5" max="8" step="0.5"></div>
     </div>
     <div class="modal-actions">
       <button class="modal-btn outline" onclick="closeModal('marginsModal')">İptal</button>
@@ -664,62 +285,40 @@ iii. ——</span>
   </div>
 </div>
 
-<!-- LOADER -->
-<div class="loader-overlay" id="loader">
-  <div class="spinner"></div>
-  <p id="loaderMsg">İşleniyor…</p>
-</div>
-
-<!-- TOAST -->
+<div class="loader-overlay" id="loader"><div class="spinner"></div><p id="loaderMsg">İşleniyor…</p></div>
 <div class="toast" id="toast"></div>
-
-<!-- STATUS BAR -->
-<div class="statusbar">
-  <span id="statusMsg">Bir dosya açın veya yeni belge oluşturun</span>
-  <span class="status-pill">UDF v1.8</span>
-</div>
+<div class="statusbar"><span id="statusMsg">Bir dosya açın veya yeni belge oluşturun</span><span class="status-pill">UDF v1.8</span></div>
 
 <script>
 'use strict';
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-// ── STATE ──
-let model = null;
-let currentFilename = 'belge.udf';
-let activeSignaturePad = null;
+let model = null, currentFilename = 'belge.udf', tabSpaces = 8;
 
-// ── FILE INPUTS ──
+// FILE INPUTS
 document.getElementById('fileInput').addEventListener('change', e => { if(e.target.files[0]) loadUDF(e.target.files[0]); e.target.value=''; });
 document.getElementById('pdfInput').addEventListener('change', e => { if(e.target.files[0]) loadPDF(e.target.files[0]); e.target.value=''; });
 
-// ── DRAG & DROP (anywhere on page) ──
+// DRAG DROP
 document.addEventListener('dragover', e => { e.preventDefault(); document.getElementById('dropOverlay').classList.add('show'); });
 document.addEventListener('dragleave', e => { if(!e.relatedTarget) document.getElementById('dropOverlay').classList.remove('show'); });
 document.addEventListener('drop', e => {
-  e.preventDefault();
-  document.getElementById('dropOverlay').classList.remove('show');
-  const f = e.dataTransfer.files[0];
-  if (!f) return;
-  if (f.name.endsWith('.udf')) loadUDF(f);
-  else if (f.name.endsWith('.pdf')) loadPDF(f);
-  else toast('Desteklenmeyen dosya formatı', true);
+  e.preventDefault(); document.getElementById('dropOverlay').classList.remove('show');
+  const f = e.dataTransfer.files[0]; if(!f) return;
+  if(f.name.endsWith('.udf')) loadUDF(f);
+  else if(f.name.endsWith('.pdf')) loadPDF(f);
+  else toast('Desteklenmeyen format', true);
 });
 
-function showDropHint() { toast('Dosyayı ekrana sürükleyip bırakın'); }
-
-// ── LOAD UDF ──
+// UDF LOAD
 async function loadUDF(file) {
   showLoader('Yükleniyor…');
   try {
-    const buf = await file.arrayBuffer();
-    model = await parseUDF(buf);
+    model = await parseUDF(await file.arrayBuffer());
     currentFilename = file.name;
-    renderDocument();
-    showEditor();
-    setDoc(file.name);
-    toast('Dosya açıldı ✓');
-    setStatus(`${file.name} — ${model.paragraphs.length} paragraf`);
-  } catch(e) { toast('Hata: ' + e.message, true); console.error(e); }
+    renderDocument(); showEditor(); setDoc(file.name);
+    toast('Dosya açıldı ✓'); setStatus(`${file.name} — ${model.paragraphs.length} paragraf`);
+  } catch(e) { toast('Hata: '+e.message, true); console.error(e); }
   hideLoader();
 }
 
@@ -727,586 +326,256 @@ async function parseUDF(buf) {
   const zip = await JSZip.loadAsync(buf);
   const xmlStr = await zip.file('content.xml').async('string');
   const doc = new DOMParser().parseFromString(xmlStr, 'text/xml');
-
   const tpl = doc.querySelector('template');
   const flatText = doc.querySelector('content')?.textContent || '';
   const pf = doc.querySelector('pageFormat');
   const elementsEl = doc.querySelector('elements');
   const stylesEl = doc.querySelector('styles');
-
   const properties = pf ? {
     mediaSizeName: pf.getAttribute('mediaSizeName')||'1',
-    leftMargin:    +pf.getAttribute('leftMargin')   ||42.525,
-    rightMargin:   +pf.getAttribute('rightMargin')  ||42.525,
-    topMargin:     +pf.getAttribute('topMargin')    ||42.525,
-    bottomMargin:  +pf.getAttribute('bottomMargin') ||42.525,
+    leftMargin: +pf.getAttribute('leftMargin')||42.525, rightMargin: +pf.getAttribute('rightMargin')||42.525,
+    topMargin: +pf.getAttribute('topMargin')||42.525, bottomMargin: +pf.getAttribute('bottomMargin')||42.525,
     paperOrientation: pf.getAttribute('paperOrientation')||'1',
-    headerFOffset: +pf.getAttribute('headerFOffset')||20,
-    footerFOffset: +pf.getAttribute('footerFOffset')||20,
+    headerFOffset: +pf.getAttribute('headerFOffset')||20, footerFOffset: +pf.getAttribute('footerFOffset')||20,
   } : defaultProps();
-
   const paragraphs = [];
-  if (elementsEl) {
-    for (const p of elementsEl.querySelectorAll(':scope > paragraph')) {
+  if(elementsEl) {
+    for(const p of elementsEl.querySelectorAll(':scope > paragraph')) {
       const runs = [];
-      for (const r of p.querySelectorAll('content')) {
-        runs.push({
-          startOffset: +r.getAttribute('startOffset')||0,
-          length: +r.getAttribute('length')||0,
-          bold: r.getAttribute('bold')==='true',
-          italic: r.getAttribute('italic')==='true',
-          underline: r.getAttribute('underline')==='true',
-        });
-      }
-      paragraphs.push({
-        alignment: +p.getAttribute('Alignment')||3,
-        firstLineIndent: +p.getAttribute('FirstLineIndent')||0,
-        runs
-      });
+      for(const r of p.querySelectorAll('content')) runs.push({ startOffset:+r.getAttribute('startOffset')||0, length:+r.getAttribute('length')||0, bold:r.getAttribute('bold')==='true', italic:r.getAttribute('italic')==='true', underline:r.getAttribute('underline')==='true' });
+      paragraphs.push({ alignment:+p.getAttribute('Alignment')||3, firstLineIndent:+p.getAttribute('FirstLineIndent')||0, runs });
     }
   }
-
-  return {
-    formatId: tpl?.getAttribute('format_id')||'1.8',
-    flatText, paragraphs, properties,
-    resolver: elementsEl?.getAttribute('resolver')||'hvl-default',
-    stylesXml: stylesEl ? new XMLSerializer().serializeToString(stylesEl) : defaultStylesXml(),
-  };
+  return { formatId:tpl?.getAttribute('format_id')||'1.8', flatText, paragraphs, properties, resolver:elementsEl?.getAttribute('resolver')||'hvl-default', stylesXml:stylesEl?new XMLSerializer().serializeToString(stylesEl):defaultStylesXml() };
 }
 
-// ── LOAD PDF ──
+// PDF LOAD
 async function loadPDF(file) {
   showLoader('PDF dönüştürülüyor…');
   try {
-    const buf = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
     let allText = '';
-
-    for (let i = 1; i <= pdf.numPages; i++) {
-      setLoaderMsg(`Sayfa ${i}/${pdf.numPages} işleniyor…`);
+    for(let i=1; i<=pdf.numPages; i++) {
+      setLoaderMsg(`Sayfa ${i}/${pdf.numPages}…`);
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-
-      // Reconstruct lines from items
-      const items = content.items;
-      let lines = [];
-      let currentLine = '';
-      let lastY = null;
-
-      for (const item of items) {
-        if ('str' in item) {
-          const y = item.transform[5];
-          if (lastY !== null && Math.abs(y - lastY) > 5) {
-            lines.push(currentLine);
-            currentLine = '';
-          }
-          currentLine += item.str;
-          lastY = y;
-        }
+      let lines=[], currentLine='', lastY=null;
+      for(const item of content.items) {
+        if('str' in item) { const y=item.transform[5]; if(lastY!==null&&Math.abs(y-lastY)>5){lines.push(currentLine);currentLine='';} currentLine+=item.str; lastY=y; }
       }
-      if (currentLine) lines.push(currentLine);
-      allText += lines.join('\n') + (i < pdf.numPages ? '\n\n' : '');
+      if(currentLine) lines.push(currentLine);
+      allText += lines.join('\n') + (i<pdf.numPages?'\n\n':'');
     }
-
-    // Build model from extracted text
-    const lines = allText.split('\n');
-    const paragraphs = [];
-    let flatText = '';
-
-    for (const line of lines) {
-      const startOffset = flatText.length;
-      const content = line + '\n';
-      flatText += content;
-      paragraphs.push({
-        alignment: 3,
-        firstLineIndent: 0,
-        runs: [{ startOffset, length: content.length, bold: false, italic: false, underline: false }]
-      });
-    }
-
-    model = {
-      formatId: '1.8', flatText, paragraphs,
-      properties: defaultProps(),
-      resolver: 'hvl-default',
-      stylesXml: defaultStylesXml(),
-    };
-    currentFilename = file.name.replace('.pdf', '.udf');
-    renderDocument();
-    showEditor();
-    setDoc(currentFilename);
+    const paragraphs=[]; let flatText='';
+    for(const line of allText.split('\n')) { const s=flatText.length, c=line+'\n'; flatText+=c; paragraphs.push({alignment:3,firstLineIndent:0,runs:[{startOffset:s,length:c.length,bold:false,italic:false,underline:false}]}); }
+    model = { formatId:'1.8', flatText, paragraphs, properties:defaultProps(), resolver:'hvl-default', stylesXml:defaultStylesXml() };
+    currentFilename = file.name.replace('.pdf','.udf');
+    renderDocument(); showEditor(); setDoc(currentFilename);
     toast(`PDF dönüştürüldü — ${pdf.numPages} sayfa ✓`);
-    setStatus(`PDF'den dönüştürüldü: ${pdf.numPages} sayfa`);
-  } catch(e) { toast('PDF hatası: ' + e.message, true); console.error(e); }
+  } catch(e) { toast('PDF hatası: '+e.message, true); console.error(e); }
   hideLoader();
 }
 
-// ── NEW DOCUMENT ──
+// NEW DOC
 function newDocument() {
-  model = {
-    formatId: '1.8',
-    flatText: '\n',
-    paragraphs: [{ alignment: 3, firstLineIndent: 0, runs: [{ startOffset:0, length:1, bold:false, italic:false, underline:false }] }],
-    properties: defaultProps(),
-    resolver: 'hvl-default',
-    stylesXml: defaultStylesXml(),
-  };
-  currentFilename = 'yeni_belge.udf';
-  renderDocument();
-  showEditor();
-  setDoc(currentFilename);
-  document.getElementById('editor').focus();
-  setStatus('Yeni belge oluşturuldu');
+  model = { formatId:'1.8', flatText:'\n', paragraphs:[{alignment:3,firstLineIndent:0,runs:[{startOffset:0,length:1,bold:false,italic:false,underline:false}]}], properties:defaultProps(), resolver:'hvl-default', stylesXml:defaultStylesXml() };
+  currentFilename='yeni_belge.udf'; renderDocument(); showEditor(); setDoc(currentFilename);
+  document.getElementById('editor').focus(); setStatus('Yeni belge oluşturuldu');
 }
+function defaultProps() { return {mediaSizeName:'1',leftMargin:42.525,rightMargin:42.525,topMargin:99.208,bottomMargin:56.693,paperOrientation:'1',headerFOffset:20,footerFOffset:20}; }
+function defaultStylesXml() { return `<styles><style name="default" description="Geçerli" family="Dialog" size="12" bold="false" italic="false" foreground="-13421773" FONT_ATTRIBUTE_KEY="javax.swing.plaf.FontUIResource[family=Dialog,name=Dialog,style=plain,size=12]" /><style name="hvl-default" family="Times New Roman" size="12" description="Gövde" /></styles>`; }
 
-function defaultProps() {
-  return { mediaSizeName:'1', leftMargin:42.525, rightMargin:42.525, topMargin:42.525, bottomMargin:42.525, paperOrientation:'1', headerFOffset:20, footerFOffset:20 };
-}
-function defaultStylesXml() {
-  return `<styles><style name="default" description="Geçerli" family="Dialog" size="12" bold="false" italic="false" foreground="-13421773" FONT_ATTRIBUTE_KEY="javax.swing.plaf.FontUIResource[family=Dialog,name=Dialog,style=plain,size=12]" /><style name="hvl-default" family="Times New Roman" size="12" description="Gövde" /></styles>`;
-}
-
-// ── RENDER ──
+// RENDER
 function renderDocument() {
-  const editor = document.getElementById('editor');
-  const page = document.getElementById('pageWrap');
-  const p = model.properties;
-  const pt = 1.333333;
-  page.style.padding = `${p.topMargin*pt}px ${p.rightMargin*pt}px ${p.bottomMargin*pt}px ${p.leftMargin*pt}px`;
-  editor.innerHTML = '';
-
-  for (const para of model.paragraphs) {
-    const div = document.createElement('div');
-    div.className = 'para';
-    div.dataset.align = para.alignment;
-    div.dataset.indent = para.firstLineIndent;
-    applyAlign(div, para.alignment);
-    if (para.firstLineIndent > 0) div.style.textIndent = (para.firstLineIndent * pt) + 'px';
-
-    let hasContent = false;
-    for (const run of para.runs) {
-      const raw = model.flatText.substring(run.startOffset, run.startOffset + run.length);
-      const text = raw.replace(/\n$/, '');
-      if (!text) continue;
-      const span = document.createElement('span');
-      span.textContent = text;
-      if (run.bold)      span.style.fontWeight = 'bold';
-      if (run.italic)    span.style.fontStyle  = 'italic';
-      if (run.underline) span.style.textDecoration = 'underline';
-      div.appendChild(span);
-      hasContent = true;
-    }
-    if (!hasContent) div.innerHTML = '<br>';
-    editor.appendChild(div);
+  const editor=document.getElementById('editor'), page=document.getElementById('pageWrap'), p=model.properties, pt=1.333333;
+  page.style.padding=`${p.topMargin*pt}px ${p.rightMargin*pt}px ${p.bottomMargin*pt}px ${p.leftMargin*pt}px`;
+  editor.innerHTML='';
+  for(const para of model.paragraphs) {
+    const div=document.createElement('div'); div.className='para'; div.dataset.align=para.alignment; div.dataset.indent=para.firstLineIndent;
+    applyAlign(div,para.alignment); if(para.firstLineIndent>0) div.style.textIndent=(para.firstLineIndent*pt)+'px';
+    let hasContent=false;
+    for(const run of para.runs) { const raw=model.flatText.substring(run.startOffset,run.startOffset+run.length), text=raw.replace(/\n$/,''); if(!text) continue; const span=document.createElement('span'); span.textContent=text; if(run.bold) span.style.fontWeight='bold'; if(run.italic) span.style.fontStyle='italic'; if(run.underline) span.style.textDecoration='underline'; div.appendChild(span); hasContent=true; }
+    if(!hasContent) div.innerHTML='<br>'; editor.appendChild(div);
   }
 }
+function applyAlign(el,a) { el.style.textAlign=['left','center','right','justify'][a]||'left'; }
 
-function applyAlign(el, a) {
-  el.style.textAlign = ['left','center','right','justify'][a] || 'left';
-}
-
-// ── SHOW EDITOR ──
+// SHOW EDITOR
 function showEditor() {
-  document.getElementById('landing').style.display = 'none';
+  document.getElementById('landing').style.display='none';
   document.getElementById('editorArea').classList.add('visible');
   document.getElementById('formatBar').classList.add('visible');
-  document.getElementById('btnSave').style.display = '';
-  document.getElementById('btnShare').style.display = '';
+  document.getElementById('btnSave').style.display='';
+  document.getElementById('btnShare').style.display='';
 }
 
-// ── SHARE ──
-async function shareDoc() {
-  if (!model) return;
-  showLoader('Hazırlanıyor…');
-  try {
-    const blob = await serializeToUDF();
-    const file = new File([blob], currentFilename, { type: 'application/octet-stream' });
-
-    // Web Share API Level 2 — dosya paylaşımı (Android Chrome destekler)
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      hideLoader();
-      await navigator.share({
-        title: currentFilename,
-        text: 'UYAP UDF Belgesi',
-        files: [file],
-      });
-      toast('Paylaşıldı ✓');
-    } else if (navigator.share) {
-      // Dosya paylaşımı desteklenmiyorsa sadece metin paylaş
-      hideLoader();
-      await navigator.share({
-        title: currentFilename,
-        text: `UYAP UDF Belgesi: ${currentFilename}`,
-      });
-    } else {
-      // Masaüstü — direkt indir
-      hideLoader();
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = currentFilename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-      toast('Dosya indirildi (tarayıcınız paylaşımı desteklemiyor)');
-    }
-  } catch(e) {
-    hideLoader();
-    if (e.name !== 'AbortError') {
-      toast('Paylaşım hatası: ' + e.message, true);
-    }
-  }
-}
-
-// ── FORMATTING ──
-function fmt(cmd) {
-  document.execCommand(cmd, false, null);
-  updateFmtBtns();
-  document.getElementById('editor').focus();
-}
-
+// FORMATTING
+function fmt(cmd) { document.execCommand(cmd,false,null); updateFmtBtns(); document.getElementById('editor').focus(); }
 function fmtAlign(a) {
-  const sel = window.getSelection();
-  if (!sel?.rangeCount) return;
-  let node = sel.getRangeAt(0).commonAncestorContainer;
-  const editor = document.getElementById('editor');
-  while (node && node !== editor) {
-    if (node.classList?.contains('para')) break;
-    node = node.parentNode;
-  }
-  if (node?.classList?.contains('para')) {
-    const map = { left:0, center:1, right:2, justify:3 };
-    node.dataset.align = map[a]??3;
-    applyAlign(node, map[a]??3);
-  }
+  const sel=window.getSelection(); if(!sel?.rangeCount) return;
+  let node=sel.getRangeAt(0).commonAncestorContainer, editor=document.getElementById('editor');
+  while(node&&node!==editor){if(node.classList?.contains('para'))break;node=node.parentNode;}
+  if(node?.classList?.contains('para')){const map={left:0,center:1,right:2,justify:3};node.dataset.align=map[a]??3;applyAlign(node,map[a]??3);}
   editor.focus();
 }
-
-function fmtSize(size) {
-  document.execCommand('fontSize', false, '7');
-  document.querySelectorAll('#editor font[size="7"]').forEach(s => {
-    s.removeAttribute('size');
-    s.style.fontSize = size + 'pt';
-  });
-  document.getElementById('editor').focus();
+function fmtSize(size) { document.execCommand('fontSize',false,'7'); document.querySelectorAll('#editor font[size="7"]').forEach(s=>{s.removeAttribute('size');s.style.fontSize=size+'pt';}); document.getElementById('editor').focus(); }
+function fmtFont(font) { document.execCommand('fontName',false,font); document.getElementById('editor').focus(); }
+document.getElementById('editor').addEventListener('keyup',updateFmtBtns);
+document.getElementById('editor').addEventListener('mouseup',updateFmtBtns);
+function updateFmtBtns() {
+  document.getElementById('fbB').classList.toggle('on',document.queryCommandState('bold'));
+  document.getElementById('fbI').classList.toggle('on',document.queryCommandState('italic'));
+  document.getElementById('fbU').classList.toggle('on',document.queryCommandState('underline'));
 }
 
-function fmtFont(fontName) {
-  document.execCommand('fontName', false, fontName);
-  document.getElementById('editor').focus();
-}
+// TAB
+function insertTab() { document.execCommand('insertText',false,'\u00A0'.repeat(tabSpaces)); document.getElementById('editor').focus(); }
+function setTabWidth(v) { tabSpaces={'2':4,'4':8,'6':12}[v]||8; }
 
-// ── SAVE ──
-function openSaveModal() {
-  if (!model) return;
-  document.getElementById('saveFilename').value = currentFilename;
-  document.getElementById('saveModal').classList.add('open');
-  setTimeout(() => {
-    const inp = document.getElementById('saveFilename');
-    inp.focus(); inp.select();
-  }, 100);
-}
-
-async function doSave() {
-  closeModal('saveModal');
-  let fn = document.getElementById('saveFilename').value.trim() || 'belge';
-  if (!fn.endsWith('.udf')) fn += '.udf';
-  showLoader('Kaydediliyor…');
-  try {
-    const blob = await serializeToUDF();
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = fn;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-    currentFilename = fn;
-    setDoc(fn);
-    setStatus(`Kaydedildi: ${fn}`);
-    toast('UDF indirildi ✓');
-  } catch(e) { toast('Kayıt hatası: ' + e.message, true); console.error(e); }
-  hideLoader();
-}
-
-async function serializeToUDF() {
-  const editor = document.getElementById('editor');
-  let flatText = '';
-  const paragraphs = [];
-
-  for (const node of editor.childNodes) {
-    if (!node.classList?.contains('para')) continue;
-
-    const segs = [];
-    walkNode(node, { bold:false, italic:false, underline:false }, segs);
-
-    const alignNum = +node.dataset.align ?? 3;
-    const indent = +node.dataset.indent ?? 0;
-    const runs = [];
-    let hasContent = false;
-
-    for (const seg of segs) {
-      if (!seg.text) continue;
-      const start = flatText.length;
-      flatText += seg.text;
-      runs.push({ startOffset: start, length: seg.text.length, bold: seg.bold, italic: seg.italic, underline: seg.underline });
-      hasContent = true;
-    }
-
-    const nlOff = flatText.length;
-    flatText += '\n';
-    if (hasContent) runs[runs.length-1].length += 1;
-    else runs.push({ startOffset: nlOff, length: 1, bold:false, italic:false, underline:false });
-
-    paragraphs.push({ alignment: alignNum, firstLineIndent: indent, runs });
-  }
-
-  if (paragraphs.length === 0) {
-    flatText = '\n';
-    paragraphs.push({ alignment:3, firstLineIndent:0, runs:[{ startOffset:0, length:1, bold:false, italic:false, underline:false }] });
-  }
-
-  const xml = buildXML(flatText, paragraphs);
-  const zip = new JSZip();
-  zip.file('content.xml', xml);
-  return zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
-}
-
-function walkNode(node, style, out) {
-  if (node.nodeType === Node.TEXT_NODE) { if(node.textContent) out.push({ text:node.textContent, ...style }); return; }
-  if (node.nodeType !== Node.ELEMENT_NODE || node.tagName === 'BR') return;
-  const s = { ...style };
-  const tag = node.tagName, cs = node.style||{};
-  if (tag==='B'||tag==='STRONG'||cs.fontWeight==='bold')  s.bold=true;
-  if (tag==='I'||tag==='EM'||cs.fontStyle==='italic')     s.italic=true;
-  if (tag==='U'||(cs.textDecoration||'').includes('underline')) s.underline=true;
-  for (const c of node.childNodes) walkNode(c, s, out);
-}
-
-function buildXML(flatText, paragraphs) {
-  const safe = flatText.replace(/]]>/g, ']]]]><![CDATA[>');
-  const p = model.properties;
-
-  let elems = `<elements resolver="${model.resolver}">\n`;
-  for (const para of paragraphs) {
-    let a = `Alignment="${para.alignment}"`;
-    if (para.firstLineIndent > 0.001) a += ` FirstLineIndent="${para.firstLineIndent}"`;
-    elems += `<paragraph ${a}>`;
-    for (const r of para.runs) {
-      let ra = `startOffset="${r.startOffset}" length="${r.length}"`;
-      if (r.bold)      ra += ` bold="true"`;
-      if (r.italic)    ra += ` italic="true"`;
-      if (r.underline) ra += ` underline="true"`;
-      elems += `<content ${ra} />`;
-    }
-    elems += `</paragraph>\n`;
-  }
-  elems += `</elements>`;
-
-  const props = `<properties><pageFormat mediaSizeName="${p.mediaSizeName}" leftMargin="${p.leftMargin}" rightMargin="${p.rightMargin}" topMargin="${p.topMargin}" bottomMargin="${p.bottomMargin}" paperOrientation="${p.paperOrientation}" headerFOffset="${p.headerFOffset}" footerFOffset="${p.footerFOffset}" /></properties>`;
-
-  return `<?xml version="1.0" encoding="UTF-8" ?>\n\n<template format_id="${model.formatId}" >\n<content><![CDATA[${safe}]]></content>${props}\n${elems}\n${model.stylesXml}\n</template>`;
-}
-
-// ── UTILS ──
-function setDoc(name) {
-  document.getElementById('docNameLabel').textContent = name;
-  document.getElementById('docNameLabel').style.display = '';
-}
-function setStatus(msg) { document.getElementById('statusMsg').textContent = msg; }
-function toast(msg, err=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.borderLeftColor = err ? '#e74c3c' : 'var(--gold)';
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3200);
-}
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function showLoader(msg='İşleniyor…') {
-  document.getElementById('loaderMsg').textContent = msg;
-  document.getElementById('loader').classList.add('show');
-}
-function setLoaderMsg(msg) { document.getElementById('loaderMsg').textContent = msg; }
-function hideLoader() { document.getElementById('loader').classList.remove('show'); }
-
-// Close modal on backdrop click
-document.querySelectorAll('.modal-overlay').forEach(el =>
-  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); })
-);
-document.getElementById('saveFilename').addEventListener('keydown', e => { if(e.key==='Enter') doSave(); });
-
-// ── TAB ──
-// Sekme genişliği: kaç adet non-breaking space kullanılacak
-let tabSpaces = 8; // varsayılan "normal" ~4cm
-
-function insertTab() {
-  const editor = document.getElementById('editor');
-  editor.focus();
-  // execCommand ile karakter ekleme — tüm tarayıcılarda güvenilir çalışır
-  document.execCommand('insertText', false, '\u00A0'.repeat(tabSpaces));
-}
-
-function setTabWidth(val) {
-  // Dar=4, Normal=8, Geniş=12 non-breaking space
-  const map = { '2': 4, '4': 8, '6': 12 };
-  tabSpaces = map[val] || 8;
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', e => {
-  if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); if(model) openSaveModal(); }
-  // Tab tuşunu editörde sekme olarak işle
-  if (e.key === 'Tab') {
-    const editor = document.getElementById('editor');
-    if (editor.contains(document.activeElement) || document.activeElement === editor) {
-      e.preventDefault();
-      insertTab();
-    }
-  }
+// ── LIST PANEL ──
+// Butona direkt event listener ile bağlıyoruz — onclick attribute kullanmıyoruz
+document.getElementById('listToggleBtn').addEventListener('click', function(e) {
+  e.stopPropagation();
+  const panel = document.getElementById('listPanel');
+  panel.classList.toggle('open');
 });
 
-// ── LİSTE ──
-let listPanelOpen = false;
-
-function toggleListPanel(e) {
-  if (e) e.stopPropagation();
-  listPanelOpen = !listPanelOpen;
-  document.getElementById('listPanel').classList.toggle('open', listPanelOpen);
-}
-
-function closeListPanel() {
-  listPanelOpen = false;
+// Liste item'larına event listener
+document.getElementById('listPanel').addEventListener('click', function(e) {
+  e.stopPropagation();
+  const item = e.target.closest('[data-list]');
+  if (!item) return;
+  const type = item.dataset.list;
   document.getElementById('listPanel').classList.remove('open');
-}
-
-// Panelin dışına tıklanınca kapat
-document.addEventListener('click', e => {
-  if (listPanelOpen && !document.getElementById('listDropdown').contains(e.target)) {
-    closeListPanel();
-  }
+  insertListItems(type);
 });
 
-function insertList(type, e) {
-  if (e) e.stopPropagation();
-  closeListPanel();
+// Dışarı tıklanınca kapat
+document.addEventListener('click', function() {
+  document.getElementById('listPanel').classList.remove('open');
+});
 
-  if (!model) { toast('Önce bir belge açın veya yeni belge oluşturun', true); return; }
-
+function insertListItems(type) {
+  if(!model) { toast('Önce bir belge açın', true); return; }
   const editor = document.getElementById('editor');
+  const pfxMap = {
+    decimal:['1.','2.','3.'], 'upper-alpha':['A.','B.','C.'], 'lower-alpha':['a)','b)','c)'],
+    'upper-roman':['I.','II.','III.'], 'lower-roman':['i.','ii.','iii.'],
+    'paren-decimal':['1)','2)','3)'], bullet:['•','•','•'], dash:['–','–','–'], arrow:['►','►','►']
+  };
+  const pfxList = pfxMap[type] || ['1.','2.','3.'];
+  const labels = ['Birinci madde','İkinci madde','Üçüncü madde'];
 
-  const items = ['Birinci madde', 'İkinci madde', 'Üçüncü madde'];
-  const frags = items.map((text, i) => {
+  const frags = pfxList.map((pfx, i) => {
     const div = document.createElement('div');
-    div.className = 'para';
-    div.dataset.align = '3';
-    div.dataset.indent = '0';
-    div.style.textAlign = 'justify';
-    div.textContent = getListPrefix(type, i + 1) + text;
+    div.className='para'; div.dataset.align='3'; div.dataset.indent='0'; div.style.textAlign='justify';
+    div.textContent = pfx + '\u00A0' + labels[i];
     return div;
   });
 
-  // İmlecin bulunduğu paragrafın arkasına veya editör sonuna ekle
   const sel = window.getSelection();
   let insertAfter = null;
-  if (sel?.rangeCount) {
+  if(sel?.rangeCount) {
     let node = sel.getRangeAt(0).commonAncestorContainer;
-    while (node && node !== editor) {
-      if (node.classList?.contains('para')) { insertAfter = node; break; }
-      node = node.parentNode;
-    }
+    while(node&&node!==editor){if(node.classList?.contains('para')){insertAfter=node;break;}node=node.parentNode;}
   }
+  if(insertAfter&&insertAfter.parentNode===editor) { [...frags].reverse().forEach(el=>insertAfter.after(el)); }
+  else { frags.forEach(el=>editor.appendChild(el)); }
 
-  if (insertAfter && insertAfter.parentNode === editor) {
-    [...frags].reverse().forEach(el => insertAfter.after(el));
-  } else {
-    frags.forEach(el => editor.appendChild(el));
-  }
-
-  // İmleci ilk maddenin sonuna taşı
-  const firstItem = frags[0];
-  const range = document.createRange();
-  range.selectNodeContents(firstItem);
-  range.collapse(false);
-  sel?.removeAllRanges();
-  sel?.addRange(range);
+  try { const range=document.createRange(); range.selectNodeContents(frags[0]); range.collapse(false); sel.removeAllRanges(); sel.addRange(range); } catch(err){}
   editor.focus();
-
-  toast(`Liste eklendi (${getListLabel(type)})`);
+  toast('Liste eklendi ✓');
 }
 
-function getListPrefix(type, n) {
-  switch(type) {
-    case 'decimal':      return `${n}.\u00A0\u00A0`;
-    case 'upper-alpha':  return `${String.fromCharCode(64+n)}.\u00A0\u00A0`;
-    case 'lower-alpha':  return `${String.fromCharCode(96+n)})\u00A0\u00A0`;
-    case 'upper-roman':  return `${toRoman(n)}.\u00A0\u00A0`;
-    case 'lower-roman':  return `${toRoman(n).toLowerCase()}.\u00A0\u00A0`;
-    case 'paren-decimal':return `${n})\u00A0\u00A0`;
-    case 'bullet':       return `•\u00A0\u00A0`;
-    case 'dash':         return `–\u00A0\u00A0`;
-    case 'arrow':        return `►\u00A0\u00A0`;
-    default:             return `${n}.\u00A0\u00A0`;
-  }
-}
-
-function getListLabel(type) {
-  const map = {
-    decimal:'1. 2. 3.', 'upper-alpha':'A. B. C.', 'lower-alpha':'a) b) c)',
-    'upper-roman':'I. II. III.', 'lower-roman':'i. ii. iii.', 'paren-decimal':'1) 2) 3)',
-    bullet:'• Madde', dash:'– Madde', arrow:'► Madde'
-  };
-  return map[type] || type;
-}
-
-function toRoman(n) {
-  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
-  const syms = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
-  let result = '';
-  for (let i = 0; i < vals.length; i++) {
-    while (n >= vals[i]) { result += syms[i]; n -= vals[i]; }
-  }
-  return result;
-}
-
-// ── KENAR BOŞLUKLARI ──
+// MARGINS
 function openMarginsModal() {
-  if (!model) return;
-  const p = model.properties;
-  const ptToCm = v => (v / 28.3465).toFixed(1);
-  document.getElementById('mLeft').value   = ptToCm(p.leftMargin);
-  document.getElementById('mRight').value  = ptToCm(p.rightMargin);
-  document.getElementById('mTop').value    = ptToCm(p.topMargin);
-  document.getElementById('mBottom').value = ptToCm(p.bottomMargin);
+  if(!model){toast('Önce bir belge açın',true);return;}
+  const p=model.properties, f=v=>+(v/28.3465).toFixed(1);
+  document.getElementById('mLeft').value=f(p.leftMargin); document.getElementById('mRight').value=f(p.rightMargin);
+  document.getElementById('mTop').value=f(p.topMargin); document.getElementById('mBottom').value=f(p.bottomMargin);
   document.getElementById('marginsModal').classList.add('open');
 }
-
-function applyPreset(left, right, top, bottom) {
-  document.getElementById('mLeft').value   = left;
-  document.getElementById('mRight').value  = right;
-  document.getElementById('mTop').value    = top;
-  document.getElementById('mBottom').value = bottom;
-}
-
+function applyPreset(l,r,t,b) { document.getElementById('mLeft').value=l; document.getElementById('mRight').value=r; document.getElementById('mTop').value=t; document.getElementById('mBottom').value=b; }
 function applyMargins() {
-  const cmToPt = v => parseFloat(v) * 28.3465;
-  model.properties.leftMargin   = cmToPt(document.getElementById('mLeft').value);
-  model.properties.rightMargin  = cmToPt(document.getElementById('mRight').value);
-  model.properties.topMargin    = cmToPt(document.getElementById('mTop').value);
-  model.properties.bottomMargin = cmToPt(document.getElementById('mBottom').value);
-
-  // Sayfayı yeniden render et (sadece padding güncelle, içeriğe dokunma)
-  const page = document.getElementById('pageWrap');
-  const p = model.properties;
-  const pt = 1.333333;
-  page.style.padding = `${p.topMargin*pt}px ${p.rightMargin*pt}px ${p.bottomMargin*pt}px ${p.leftMargin*pt}px`;
-
-  closeModal('marginsModal');
-  toast('Kenar boşlukları güncellendi ✓');
+  const c=v=>parseFloat(v)*28.3465;
+  model.properties.leftMargin=c(document.getElementById('mLeft').value); model.properties.rightMargin=c(document.getElementById('mRight').value);
+  model.properties.topMargin=c(document.getElementById('mTop').value); model.properties.bottomMargin=c(document.getElementById('mBottom').value);
+  const p=model.properties, pt=1.333333;
+  document.getElementById('pageWrap').style.padding=`${p.topMargin*pt}px ${p.rightMargin*pt}px ${p.bottomMargin*pt}px ${p.leftMargin*pt}px`;
+  closeModal('marginsModal'); toast('Kenar boşlukları güncellendi ✓');
 }
 
-// ── SERVICE WORKER ──
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(console.error);
+// SAVE
+function openSaveModal() { if(!model)return; document.getElementById('saveFilename').value=currentFilename; document.getElementById('saveModal').classList.add('open'); setTimeout(()=>{const i=document.getElementById('saveFilename');i.focus();i.select();},100); }
+async function doSave() {
+  closeModal('saveModal'); let fn=document.getElementById('saveFilename').value.trim()||'belge'; if(!fn.endsWith('.udf'))fn+='.udf';
+  showLoader('Kaydediliyor…');
+  try { const blob=await serializeToUDF(), a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(()=>URL.revokeObjectURL(a.href),5000); currentFilename=fn; setDoc(fn); setStatus(`Kaydedildi: ${fn}`); toast('UDF indirildi ✓'); }
+  catch(e){toast('Kayıt hatası: '+e.message,true);console.error(e);}
+  hideLoader();
 }
+
+// SHARE
+async function shareDoc() {
+  if(!model)return; showLoader('Hazırlanıyor…');
+  try {
+    const blob=await serializeToUDF(), file=new File([blob],currentFilename,{type:'application/octet-stream'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){hideLoader();await navigator.share({title:currentFilename,files:[file]});toast('Paylaşıldı ✓');}
+    else{hideLoader();const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=currentFilename;document.body.appendChild(a);a.click();document.body.removeChild(a);toast('Dosya indirildi ✓');}
+  } catch(e){hideLoader();if(e.name!=='AbortError')toast('Hata: '+e.message,true);}
+}
+
+// SERIALIZE
+async function serializeToUDF() {
+  const editor=document.getElementById('editor'); let flatText=''; const paragraphs=[];
+  for(const node of editor.childNodes) {
+    if(!node.classList?.contains('para'))continue;
+    const segs=[]; walkNode(node,{bold:false,italic:false,underline:false},segs);
+    const alignNum=+node.dataset.align??3, indent=+node.dataset.indent??0, runs=[]; let hasContent=false;
+    for(const seg of segs){if(!seg.text)continue;const start=flatText.length;flatText+=seg.text;runs.push({startOffset:start,length:seg.text.length,bold:seg.bold,italic:seg.italic,underline:seg.underline});hasContent=true;}
+    const nlOff=flatText.length;flatText+='\n';
+    if(hasContent)runs[runs.length-1].length+=1; else runs.push({startOffset:nlOff,length:1,bold:false,italic:false,underline:false});
+    paragraphs.push({alignment:alignNum,firstLineIndent:indent,runs});
+  }
+  if(paragraphs.length===0){flatText='\n';paragraphs.push({alignment:3,firstLineIndent:0,runs:[{startOffset:0,length:1,bold:false,italic:false,underline:false}]});}
+  const xml=buildXML(flatText,paragraphs); const zip=new JSZip(); zip.file('content.xml',xml); return zip.generateAsync({type:'blob',compression:'DEFLATE'});
+}
+function walkNode(node,style,out) {
+  if(node.nodeType===Node.TEXT_NODE){if(node.textContent)out.push({text:node.textContent,...style});return;}
+  if(node.nodeType!==Node.ELEMENT_NODE||node.tagName==='BR')return;
+  const s={...style},tag=node.tagName,cs=node.style||{};
+  if(tag==='B'||tag==='STRONG'||cs.fontWeight==='bold')s.bold=true;
+  if(tag==='I'||tag==='EM'||cs.fontStyle==='italic')s.italic=true;
+  if(tag==='U'||(cs.textDecoration||'').includes('underline'))s.underline=true;
+  for(const c of node.childNodes)walkNode(c,s,out);
+}
+function buildXML(flatText,paragraphs) {
+  const safe=flatText.replace(/]]>/g,']]]]><![CDATA[>'), p=model.properties;
+  let elems=`<elements resolver="${model.resolver}">\n`;
+  for(const para of paragraphs){let a=`Alignment="${para.alignment}"`;if(para.firstLineIndent>0.001)a+=` FirstLineIndent="${para.firstLineIndent}"`;elems+=`<paragraph ${a}>`;for(const r of para.runs){let ra=`startOffset="${r.startOffset}" length="${r.length}"`;if(r.bold)ra+=` bold="true"`;if(r.italic)ra+=` italic="true"`;if(r.underline)ra+=` underline="true"`;elems+=`<content ${ra} />`;}elems+=`</paragraph>\n`;}
+  elems+=`</elements>`;
+  const props=`<properties><pageFormat mediaSizeName="${p.mediaSizeName}" leftMargin="${p.leftMargin}" rightMargin="${p.rightMargin}" topMargin="${p.topMargin}" bottomMargin="${p.bottomMargin}" paperOrientation="${p.paperOrientation}" headerFOffset="${p.headerFOffset}" footerFOffset="${p.footerFOffset}" /></properties>`;
+  return `<?xml version="1.0" encoding="UTF-8" ?>\n\n<template format_id="${model.formatId}" >\n<content><![CDATA[${safe}]]></content>${props}\n${elems}\n${model.stylesXml}\n</template>`;
+}
+
+// UTILS
+function setDoc(n){document.getElementById('docNameLabel').textContent=n;document.getElementById('docNameLabel').style.display='';}
+function setStatus(m){document.getElementById('statusMsg').textContent=m;}
+function toast(msg,err=false){const t=document.getElementById('toast');t.textContent=msg;t.style.borderLeftColor=err?'#e74c3c':'var(--gold)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showLoader(m='İşleniyor…'){document.getElementById('loaderMsg').textContent=m;document.getElementById('loader').classList.add('show');}
+function setLoaderMsg(m){document.getElementById('loaderMsg').textContent=m;}
+function hideLoader(){document.getElementById('loader').classList.remove('show');}
+
+document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+document.getElementById('saveFilename').addEventListener('keydown',e=>{if(e.key==='Enter')doSave();});
+
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();if(model)openSaveModal();}
+  if(e.key==='Tab'){const ed=document.getElementById('editor');if(ed===document.activeElement||ed.contains(document.activeElement)){e.preventDefault();insertTab();}}
+});
+
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(console.error);
 </script>
 </body>
 </html>
