@@ -184,41 +184,6 @@ select.fb-sel { height: 32px; border: 1px solid var(--border); border-radius: 5p
   <div class="fb-sep"></div>
   <div class="list-dropdown" id="listDropdown">
     <button class="fb-btn" id="listToggleBtn">☰ Liste ▾</button>
-    <div class="list-panel" id="listPanel">
-      <h4>Numaralandırma</h4>
-      <div class="list-grid">
-        <button class="list-item" data-list="decimal"><span class="li-label">1. 2. 3.</span><span class="li-preview">1. ——
-2. ——
-3. ——</span></button>
-        <button class="list-item" data-list="upper-alpha"><span class="li-label">A. B. C.</span><span class="li-preview">A. ——
-B. ——
-C. ——</span></button>
-        <button class="list-item" data-list="lower-alpha"><span class="li-label">a) b) c)</span><span class="li-preview">a) ——
-b) ——
-c) ——</span></button>
-        <button class="list-item" data-list="upper-roman"><span class="li-label">I. II. III.</span><span class="li-preview">I. ——
-II. ——
-III. ——</span></button>
-        <button class="list-item" data-list="lower-roman"><span class="li-label">i. ii. iii.</span><span class="li-preview">i. ——
-ii. ——
-iii. ——</span></button>
-        <button class="list-item" data-list="paren-decimal"><span class="li-label">1) 2) 3)</span><span class="li-preview">1) ——
-2) ——
-3) ——</span></button>
-      </div>
-      <h4>Madde İşareti</h4>
-      <div class="list-grid">
-        <button class="list-item" data-list="bullet"><span class="li-label">Nokta</span><span class="li-preview">• ——
-• ——
-• ——</span></button>
-        <button class="list-item" data-list="dash"><span class="li-label">Tire</span><span class="li-preview">– ——
-– ——
-– ——</span></button>
-        <button class="list-item" data-list="arrow"><span class="li-label">Ok</span><span class="li-preview">► ——
-► ——
-► ——</span></button>
-      </div>
-    </div>
   </div>
   <div class="fb-sep"></div>
   <button class="fb-btn" onclick="openMarginsModal()">📐 Kenarlar</button>
@@ -283,6 +248,49 @@ iii. ——</span></button>
       <button class="modal-btn outline" onclick="closeModal('marginsModal')">İptal</button>
       <button class="modal-btn primary" onclick="applyMargins()">Uygula</button>
     </div>
+  </div>
+</div>
+
+<!-- LIST PANEL - body'nin doğrudan çocuğu, hiçbir şey tarafından kesilemez -->
+<div id="listPanel" style="
+  display:none; position:fixed; z-index:99999;
+  background:white; border:1.5px solid #d4cfc4; border-radius:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.22); padding:14px;
+  width:300px; max-height:70vh; overflow-y:auto;
+  font-family:'DM Sans',sans-serif;
+">
+  <div style="font-size:11px;font-weight:600;color:#7a7a7a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #d4cfc4;">Numaralandırma</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;">
+    <button class="list-item" data-list="decimal"><span class="li-label">1. 2. 3.</span><span class="li-preview">1. ——
+2. ——
+3. ——</span></button>
+    <button class="list-item" data-list="upper-alpha"><span class="li-label">A. B. C.</span><span class="li-preview">A. ——
+B. ——
+C. ——</span></button>
+    <button class="list-item" data-list="lower-alpha"><span class="li-label">a) b) c)</span><span class="li-preview">a) ——
+b) ——
+c) ——</span></button>
+    <button class="list-item" data-list="upper-roman"><span class="li-label">I. II. III.</span><span class="li-preview">I. ——
+II. ——
+III. ——</span></button>
+    <button class="list-item" data-list="lower-roman"><span class="li-label">i. ii. iii.</span><span class="li-preview">i. ——
+ii. ——
+iii. ——</span></button>
+    <button class="list-item" data-list="paren-decimal"><span class="li-label">1) 2) 3)</span><span class="li-preview">1) ——
+2) ——
+3) ——</span></button>
+  </div>
+  <div style="font-size:11px;font-weight:600;color:#7a7a7a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #d4cfc4;">Madde İşareti</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+    <button class="list-item" data-list="bullet"><span class="li-label">Nokta</span><span class="li-preview">• ——
+• ——
+• ——</span></button>
+    <button class="list-item" data-list="dash"><span class="li-label">Tire</span><span class="li-preview">– ——
+– ——
+– ——</span></button>
+    <button class="list-item" data-list="arrow"><span class="li-label">Ok</span><span class="li-preview">► ——
+► ——
+► ——</span></button>
   </div>
 </div>
 
@@ -438,28 +446,25 @@ function setTabWidth(v) { tabSpaces={'2':4,'4':8,'6':12}[v]||8; }
 document.getElementById('listToggleBtn').addEventListener('click', function(e) {
   e.stopPropagation();
   const panel = document.getElementById('listPanel');
-  const isOpen = panel.classList.contains('open');
-  if (isOpen) { panel.classList.remove('open'); return; }
-  // Butonun ekrandaki konumuna göre paneli yerleştir
+  const isOpen = panel.style.display === 'block';
+  if (isOpen) { panel.style.display = 'none'; return; }
   const rect = this.getBoundingClientRect();
   panel.style.top  = (rect.bottom + 4) + 'px';
   panel.style.left = Math.min(rect.left, window.innerWidth - 310) + 'px';
-  panel.classList.add('open');
+  panel.style.display = 'block';
 });
 
-// Liste item'larına event listener
 document.getElementById('listPanel').addEventListener('click', function(e) {
   e.stopPropagation();
   const item = e.target.closest('[data-list]');
   if (!item) return;
-  const type = item.dataset.list;
-  document.getElementById('listPanel').classList.remove('open');
-  insertListItems(type);
+  this.style.display = 'none';
+  insertListItems(item.dataset.list);
 });
 
-// Dışarı tıklanınca kapat
 document.addEventListener('click', function() {
-  document.getElementById('listPanel').classList.remove('open');
+  const panel = document.getElementById('listPanel');
+  if (panel) panel.style.display = 'none';
 });
 
 function insertListItems(type) {
