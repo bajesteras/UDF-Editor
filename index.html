@@ -49,10 +49,11 @@ select.fb-sel { height: 32px; border: 1px solid var(--border); border-radius: 5p
 /* LIST DROPDOWN */
 .list-dropdown { position: relative; flex-shrink: 0; }
 .list-panel {
-  display: none; position: absolute; top: calc(100% + 4px); left: 0;
+  display: none;
+  position: fixed;
   background: white; border: 1.5px solid var(--border); border-radius: 10px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18); padding: 14px;
-  z-index: 1000; width: 300px; max-height: 70vh; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22); padding: 14px;
+  z-index: 9999; width: 300px; max-height: 70vh; overflow-y: auto;
 }
 .list-panel.open { display: block; }
 .list-panel h4 { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
@@ -437,7 +438,13 @@ function setTabWidth(v) { tabSpaces={'2':4,'4':8,'6':12}[v]||8; }
 document.getElementById('listToggleBtn').addEventListener('click', function(e) {
   e.stopPropagation();
   const panel = document.getElementById('listPanel');
-  panel.classList.toggle('open');
+  const isOpen = panel.classList.contains('open');
+  if (isOpen) { panel.classList.remove('open'); return; }
+  // Butonun ekrandaki konumuna göre paneli yerleştir
+  const rect = this.getBoundingClientRect();
+  panel.style.top  = (rect.bottom + 4) + 'px';
+  panel.style.left = Math.min(rect.left, window.innerWidth - 310) + 'px';
+  panel.classList.add('open');
 });
 
 // Liste item'larına event listener
